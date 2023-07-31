@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="gb2312">
+    <title>Times Property</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="robots" content="" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+   <!-- <link rel="stylesheet" href="css/style.css" media="all" />
+    <link rel="stylesheet" href="css/dropzone.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="bootstrap-3.2.0-dist/css/bootstrap.min.css">-->
+    <!--[if IE]><link rel="stylesheet" href="css/ie.css" media="all" /><![endif]-->
+
+    <link href="bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script src="js/knockout-2.3.0.js"></script>
+    <style type="text/css">
+         a:link {
+            color: #000;
+        }
+         table {
+            margin-top:20px;
+            margin-bottom:50px;
+        }
+
+        table, tr {
+            /*border: 1px solid green;*/
+            text-align: center;
+        }
+
+        td {
+            background-color: #fff;
+            
+            /*color: white;*/
+            width: 300px;
+        }
+
+    </style>
+
+    <script type="text/javascript">
+        var projguid = localStorage.getItem("projectguid");
+        var buildingid = getQueryString("buildingid");
+        var roomid = getQueryString("roomid");
+        var status = getQueryString('status');
+        var Room = getQueryString("Room");
+        //var buildname = getQueryString("buildname");
+
+        var chooseroom;
+       
+        var token = localStorage.getItem("token");
+        var url = localStorage.getItem("url");
+
+        var Status;
+        //var room = localStorage.getItem("room");//取回room对象          
+        //var room = JSON.parse(room);//把字符串转换成JSON对象
+       
+        var singleroomdata = { info: { token: token }, func: 'roominfo', params: { BldGUID: buildingid, projGUID: projguid } };
+        $(function () {
+
+            var projectname = localStorage.getItem("projectname");
+            $("#currentProj").html("当前项目：" + projectname);
+            //$("#bldname").text(buildname);
+            ko.applyBindings(new ViewModel());
+        })
+
+        function ViewModel() {
+            var self = this;
+            self.singleroom = ko.observableArray();
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: singleroomdata,
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+                        var roomda = json.data[i];
+                        for (var i in json.data) {
+                            if (roomid == json.data[i].RoomGUID) {
+
+                                Status = json.data[i].Status;
+                                if (json.data[i].Status == "待售") {
+                                    json.data[i].confirm = "确定购房？"
+                                }
+                                else {
+                                    json.data[i].confirm = "确定退房？"
+                                }
+                                self.singleroom.push(json.data[i]);
+                            }
+                        }                   
+                    }
+                }
+            })
+
+        }
+
+        //千分位表示
+        function format(n) {
+            var re = /\d{1,3}(?=(\d{3})+$)/g;
+            var n1 = n.replace(/^(\d+)((\.\d+)?)$/, function (s, s1, s2) { return s1.replace(re, "$&,") + s2; });
+            return n1;
+        }
+
+
+
+        //获取url参数
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+        //  二维码
+        function takecode() {
+            JSBridge.takecode(function (codeInfo, isSuccess) {
+                if (isSuccess == true) {
+                    var obj = eval('(' + codeInfo + ')');
+                  
+                    take(obj.code);
+                }
+                else {
+                    alert("二维码扫描不成功");
+                }
+            });
+        }
+
+        function take(keycode) {               
+            if (Status == "待售") {
+                //var testdata = { info: { token: token, }, func: 'selectroom', params: { 'qrcode': 'B588540-27B6-16CE-68F2-C2AFBD5CD635', 'ProjGUID': projguid, 'BldGUID': buildingid, 'RoomGUID': roomid } };
+
+                var testdata = { info: { token: token, }, func: 'selectroom', params: { 'qrcode': keycode, 'ProjGUID': projguid, 'BldGUID': buildingid, 'RoomGUID': roomid } };
+                $.ajax({
+                    url: url,
+                    dataType: 'jsonp',
+                    data: testdata,
+                    jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                    success: function (json) {
+                        if (json.result) {
+                            //alert("房间号：" + Room + "购房成功");
+                            alert(json.msg);
+                            window.location.href = "javascript:history.back(-1)";
+                            //window.location.href = "choose1.html";
+                            //$("#divmessage").append("<span>购房成功！</span> <br>");
+                        }
+                        else {
+                            //alert("此单已购！");
+                            alert(json.msg);
+                            window.location.href = "javascript:history.back(-1)";
+                            //window.location.href = "choose1.html";
+
+                            //$("#divmessage").append("<span>购房失败！</span> <br>");
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.msg);
+
+                    },
+                    timeout: 3000,
+                })
+            }
+            else {
+                var testdata = { info: { token: token }, func: 'unselectroom', params: { 'qrcode': keycode, 'ProjGUID': projguid, 'BldGUID': buildingid, 'RoomGUID': roomid } };
+                $.ajax({
+                    url: url,
+                    dataType: 'jsonp',
+                    data: testdata,
+                    jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                    success: function (json) {
+                        if (json.result) {
+                            //alert("房间号：" + Room + "退房成功");
+                            alert(json.msg);
+                            window.location.href = "javascript:history.back(-1)";
+                            //window.location.href = "choose1.html";
+
+                            //$("#divmessage").append("<span>退房成功！</span> <br>");
+                        }
+                        else {
+                            //alert("非原购房筹单");
+                            alert(json.msg);
+                            window.location.href = "javascript:history.back(-1)";
+
+                            //window.location.href = "choose1.html";
+
+                            //$("#divmessage").append("<span>退房失败！</span> <br>");
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.msg);
+
+                    },
+                    timeout: 3000,
+                })
+            }
+        }
+
+
+    </script>
+</head>
+<body>
+    <nav id="menu" class="navbar navbar-default  navbar-fixed-top" role="navigation" style="height: 71px; font-size: 14px; padding-top: 10px">
+        <div class="navbar-header" style="height: 70px">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand">时代地产</a>
+        </div>
+        <div class="collapse navbar-collapse" id="example-navbar-collapse" style="height: 70px; font-size: 24px">
+            <ul class="nav navbar-nav">
+                <li><a href="main.html">首页</a></li>             
+                <li class="active" ><a href="room.html">选房</a></li>
+                <li ><a href="report.html">报表</a></li>
+                <li ><a href="roomnei.html">内控表</a></li>
+               
+                <li style="font-size: 16px"><a id="currentProj"></a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+    <section class="content"  style="margin-top:120px; margin-left: 0; height:90%; min-height:90%; ">
+        <div id="divmessage" class="row" style="margin-left: 0; margin-top: 10px; text-align: center" data-bind="foreach: singleroom">
+            <div style="margin-bottom:20px;font-size:48px"><span data-bind="text: confirm"></span></div>
+            <!--<table>
+                <tr>
+                    <td>房间号</td>
+                    <td><span data-bind="text: Room"></span></td>
+                </tr>
+                  <tr>
+                    <td>状态</td>
+                    <td><span data-bind="text: Status"></span></td>
+                </tr>
+                  <tr>
+                    <td>建筑面积</td>
+                    <td><span data-bind="text: BldArea"></span></td>
+                </tr>
+                  <tr>
+                    <td>室内面积</td>
+                    <td><span data-bind="text: TnArea"></span></td>
+                </tr>
+                  <tr>
+                    <td>总价</td>
+                    <td><span data-bind="text: format(RoomTotal)"></span></td>
+                </tr>
+                 <tr>
+                    <td>建筑价</td>
+                    <td><span data-bind="text: format(BldCjPrice)"></span></td>
+                </tr>
+                 <tr>
+                    <td>面价</td>
+                    <td><span data-bind="text: format(Total)"></span></td>
+                </tr>
+                
+            </table>-->
+        <!--   <span style="margin: 0 auto; font-size: 22px;" id="bldname"></span>-->
+            <h1>房间号：<span data-bind="text: ShowCode"></span></h1>
+           <!-- <h1>状态：<span data-bind="text: Status"></span></h1>-->
+            <h1>建筑面积：<span data-bind="text: BldArea"></span>㎡</h1>
+            <h1>套内面积：<span data-bind="text: TnArea"></span>㎡</h1>
+            <h1>成交总价：<span data-bind="text: format(RoomTotal)"></span>元</h1>
+            <h1>成交单价：<span data-bind="text: format(BldCjPrice)"></span>元</h1>
+           <!-- <h1>面价：<span data-bind="text: format(Total)"></span>元</h1>-->
+        
+            <button onclick="takecode()" class="btn btn-primary btn-large" style="width: 150px;margin-top:20px;">
+                确定
+            </button>
+             <button onclick="javascript:history.back(-1); " class="btn btn-primary btn-large" style="width: 150px;margin-top:20px">
+                返回上一页
+            </button>
+        </div>
+    </section>
+
+
+</body>
+
+
+</html>

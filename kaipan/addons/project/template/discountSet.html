@@ -1,0 +1,39 @@
+<form method="post" action="{$url}" id="form-set" class="form-horizontal" role="form" style="min-height: 160px">
+    <input type="hidden" name="token" value="{$_W['token']}" />
+    <div class="form-group">
+        <label class="col-sm-2 control-label">付款方式</label>
+        <div class = "col-md-5">
+            <select name="payform" class="form-control" class ="col-sm-12">
+                {loop $payform $item}
+                <option value="{$item['PayFormGUID']}" {if $item['PayFormGUID']==$set['pay_id']}selected{/if}>{$item['title']}</option>
+                {/loop}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">折扣</label>
+        <div class="container-fluid">
+            {loop $discount $item}
+            <div class="col-sm-3">
+                <div class = "brand-primary" style="width: 128px;height:66px; float:left; margin:5px 0 0 5px; background-color:#d9edf7; border-radius:10px;">
+                    <lable for="r{$item['DiscntGUID']}" style="font-size: 20px; line-height:20px;">{$item['DiscntName']} </lable>
+                    <div style="font-size :15px;margin:5px 0 0 5px; float:left; width:100px;list-style-type:none;text-decoration:none;">
+                        {if $item['DiscntValue']>0}
+                        <li>折扣 <span class="badge">{$item['DiscntValue']}</span></li>
+                        {/if}
+                        {if $item['PreferentialPrice']>0}
+                        <li>金额 <span class="badge">-{$item['PreferentialPrice']}元</span></li>
+                        {/if}
+                    </div>
+                    <div style=" margin:4px 0 0 5px; float:left; width:14px;list-style-type:none;text-decoration:none;">
+                        <input class="form-control" type="checkbox" value="{$item['DiscntGUID']}" id = "r{$item['DiscntGUID']}"
+                               name="discount[]" {if $item['select']}checked{/if}/>
+                    </div>
+                </div>
+
+            </div>
+            {/loop}
+        </div>
+    </div>
+
+</form>

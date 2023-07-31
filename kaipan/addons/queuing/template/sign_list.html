@@ -1,0 +1,138 @@
+{template 'common/header-project'}
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li ><a href="{php echo $this->createWebUrl('sign');}">签到列表</a></li>
+    </ul>
+    <div class="panel panel-info">
+        <div class="panel-body">
+            <form action="{php echo $this->createWebUrl('sign');}" method="post"  class="form-horizontal" role="form" id="form1">
+
+                <input type="hidden" name="dispnum" value="{$row['dispnum']}" />
+
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">组号</label>
+                    <div class="col-sm-4">
+                        <input type="text" id="dispnum" class="form-control" name="dispnum" value="{$row['dispnum']}"  placeholder="请输入组号信息"/>
+                    </div>
+                    <label class="col-xs-12 col-sm-3 col-md-2 col-lg-2 control-label">组容量数</label>
+                    <div class="col-sm-4">
+                        <input type="text" id="maxnum" class="form-control" name="maxnum" value="{$row['maxnum']}"  placeholder="请输入组的容量数"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label"></label>
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-primary" name="submit" value="提交">提交</button>
+                        <input type="hidden" name="token" value="{$_W['token']}" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="clearfix">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th >组号</th>
+                    <th >状态</th>
+                    <th >叫号时间</th>
+                    <th >创建时间</th>
+                    <th >组内人数</th>
+                    <th >组的容量数</th>
+                    <th style="width:110px;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {loop $list $row}
+                <tr>
+                    <td>{$row['dispnum']}</td>
+                    <td>{$row['status']}</td>
+                    <td>{php echo date('Y-m-d H:i:s',$row['calltime']);}</td>
+                    <td>{php echo date('Y-m-d H:i:s',$row['createtime']);}</td>
+                    <td>{$row['signednum']}</td>
+                    <td>{$row['maxnum']}</td>
+                    <td>
+                        <button class="btn btn-primary " data-toggle="modal" data-target="#myModal">增加组员信息</button>
+                    </td>
+                </tr>
+                {/loop}
+                </tbody>
+            </table>
+            {$pager}
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h5 class="modal-title" id="myModalLabel">认筹单信息</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="{php echo $this->createWebUrl('sign');}" method="post" class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">客户姓名</label>
+                            <div class="col-sm-3">
+                                <input class="form-control" name="cname" id="cname" type="text" readonly ="true" value="{$arraysign['cname']}">
+                            </div>
+                            <label class="col-sm-2 control-label">证件号码</label>
+                            <div class="col-sm-3">
+                                <input class="form-control" name="cardid" id="cardid" type="text" readonly ="true" value="{$arraysign['cardid']}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系电话</label>
+                            <div class="col-sm-3">
+                                <input class="form-control" name="mobile" id="mobile" type="text" readonly ="true" value="{$arraysign['mobile']}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">取消
+                                </button>
+                                <button type="submit" class="btn btn-primary" name="submit1" value="添加">添加</button>
+                                <input type="hidden" name="token" value="{$_W['token']}" />
+                            </div>
+                        </div>
+                    </form>
+                    <table class="table table-hover">
+                        <thead class="navbar-inner">
+                        <tr>
+                            <th>组号</th>
+                            <th>签到状态</th>
+                            <th>签到时间</th>
+                            <th>预设</th>
+                            <th>姓名</th>
+                            <th>证件号码</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {loop $disp $row}
+                        <tr>
+                            <td>{$row['gid']}</td>
+                            <td>{$row['signed']}</td>
+                            <td>{php echo date('Y-m-d H:i:s',$row['signtime']);}</td>
+                            <td>{$row['preset']}</td>
+                            <td>{$row['cname']}</td>
+                            <td>{$row['cardid']}</td>
+                        </tr>
+                        {/loop}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{template 'common/footer'}

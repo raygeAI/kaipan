@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./web/resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./web/resource/css/font-awesome.min.css" rel="stylesheet">
+    <link href="./web/resource/css/common.css" rel="stylesheet">
+    <script src="./web/resource/js/lib/jquery-1.11.1.min.js"></script>
+    <script src="./web/resource/js/lib/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div>
+        <label for="p_radio_1" class="radio-inline"><input type="radio" name="local" id="p_radio_1" value="1" checked/> 本地</label>
+        <label for="p_radio_2" class="radio-inline"><input type="radio" name="local" id="p_radio_2" value="0" /> 远程</label>
+    </div>
+    <div >
+        <label for="func_1" class="radio-inline"><input type="radio" name="func" id="func_1" value="clientregister" checked/> clientRegister</label>
+        <label for="func_2" class="radio-inline"><input type="radio" name="func" id="func_2" value="printerregister" /> printerRegister</label>
+        <label for="func_7" class="radio-inline"><input type="radio" name="func" id="func_7" value="gettasks" /> gettasks</label>
+
+        <label for="func_6" class="radio-inline"><input type="radio" name="func" id="func_6" value="printerdelete" /> printerdelete</label>
+        <label for="func_4" class="radio-inline"><input type="radio" name="func" id="func_4" value="statusreport" /> statusreport</label>
+        <label for="func_4" class="radio-inline"><input type="radio" name="func" id="func_4" value="taskreport" /> taskreport</label>
+        <label for="func_4" class="radio-inline"><input type="radio" name="func" id="func_4" value="gettemplatebyid" /> gettemplatebyid</label>
+
+    </div>  
+    <div class="input-group">
+        <div class="input-group">
+            <label>module</label> <input  type="text" id="module" value="01B513CD-9ACF-CBEA-4E10-D36A60474090" />
+        </div>
+        <div class="input-group">
+            <label>print</label> <input type="text"  id="print" value='fax'/>
+        </div>
+        <div class="input-group">        
+            <label>id</label> <input type="text" id="id" value="1" />
+        </div>
+        <div class="input-group">
+        <label>status</label> <input type="text" id="status" value="正常"/>
+        </div>
+            <button class="btn btn-danger" onclick="call();">调用</button>
+    
+    </div>
+    <div class="row">
+        <textarea id="result" style="height: 200px;width: 400px;"></textarea>
+    </div>
+</div>
+<script>
+    //http://182.254.197.221/print.php?XDEBUG_SESSION_START=PHPSTORMact=statusReport&token=62ef3d4776847f66ac067b2aa51a0bb0&printerId=9&printerStatus=准备就绪
+    var token='8f70e5d79fe99a1a224c03093bbd0c1a';
+    function call(){
+        $('#result').val('');
+        var module=$('#module').val();
+        var print=$('#print').val();
+        var id=$('#id').val();
+        var status=$('#status').val();
+        
+        var local= $('input:radio[name="local"]:checked').val();
+        var url=local==1?'http://work.cc/newkp/print.php':'http://182.254.197.221/print.php';
+        url=url+'?XDEBUG_SESSION_START=PHPSTORM';
+        var data = {};
+        var func= $('input:radio[name="func"]:checked').val();;
+        
+        switch(func){
+            case 'clientregister':
+                data={ 'computerName':'dxw_think','computerId': '02e6645d258e8f45074066d51c11c668' };
+                break;
+            case 'printerregister':
+                data={ 'token':token,'printerName': print ,'index':id,'type':'标准'};
+                break;
+            case 'printerdelete':
+                data={ 'token':token,'printerName': print ,'index':id,'type':'标准'};
+                break;
+            case 'statusreport':
+                data={ 'token':token,'printerId': id ,'printerStatus':status};
+                break;
+            case 'taskreport':
+                data={ 'token':token,'taskId': id ,'taskStatus':status};
+                break;
+            case 'gettasks':
+                data={ 'token':token};
+                break;
+            case 'gettemplatebyid':
+                data={ 'token':token,'templateId': id };
+                break;
+                
+        }
+        data.act=func;
+        $.ajax({
+            url: url,
+            dataType: 'jsonp',
+            data: data,
+            jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+            success: function (json) {
+                $('#result').val( JSON.stringify(json));
+                if(func=='clientregister'){
+                    token=json.data;
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.msg);
+
+            },
+            timeout: 60000
+        });
+    }
+</script>
+</body>
+</html>

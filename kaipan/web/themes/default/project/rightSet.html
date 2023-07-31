@@ -1,0 +1,33 @@
+<form action="{$url}" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="form-set">
+    <table class="table table-hover">
+        <thead class="navbar-inner">
+        <tr>
+            <th style="width:24px;" class="row-first">&nbsp;</th>
+            <th style="width:80px;">模块</th>
+            <th>权限</th>
+        </tr>
+        </thead>
+        <tbody>
+        {loop $moduleRight $key $mod}
+        <tr>
+            <td class="row-first"><input type="checkbox" rel="{$key}" class="check_all" /></td>
+            <td>{$mod['name']}</td>
+            <td class="disabled">{loop $mod['operate'] $m}
+                <label><input {if $m['enable']} checked="checked" {/if} type="checkbox" value="{$m['name']}" name="m_{$key}[]">
+                    {$m['title']}</label>
+                {/loop}
+            </td>
+        </tr>
+        {/loop}
+        </tbody>
+    </table>
+    <input name="token" type="hidden" value="{$_W['token']}" />
+</form>
+<script type="text/javascript">
+    require(['jquery'],function($){
+        $(".check_all").click(function(){
+            var rel = $(this).attr('rel');
+            $("input[name^='m_"+rel+"']").prop('checked', $(this).prop("checked"));
+        });
+    });
+</script>        

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <title>Times Property</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="robots" content="" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+    <!--<link rel="stylesheet" href="css/style.css" media="all" />-->
+    <link rel="stylesheet" type="text/css" href="bootstrap-3.2.0-dist/css/bootstrap.min.css">
+    <!--[if IE]><link rel="stylesheet" href="css/ie.css" media="all" /><![endif]-->
+    <!--[if lt IE 9]><link rel="stylesheet" href="css/lt-ie-9.css" media="all" /><![endif]-->
+    <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script src="js/knockout-2.3.0.js"></script>
+
+    <style type="text/css">
+        table {
+            margin: auto;
+        }
+
+        table, tr {
+            border: none;
+            /*text-align: center;*/
+        }
+
+        th {
+            text-align: right;
+            width: 250px;
+        }
+
+        td {
+            /*background-color: green;*/
+            /*color: white;*/
+            text-align: left;
+            width: 250px;
+            padding-left: 50px;
+        }
+    </style>
+    <script type="text/javascript">
+        var url = localStorage.getItem("url");
+        var token = localStorage.getItem("token");
+        var projectguid = localStorage.getItem("projectguid");
+        var reportdata = { info: { token: token }, func: 'report', params: { projguid: projectguid } };
+
+        $(function () {
+
+            var projectnum = localStorage.getItem("projectnum");
+            if (projectnum == 1) {
+                $("#project").hide();
+            }
+
+            var projectname = localStorage.getItem("projectname");
+            $("#currentProj").html("当前项目：" + projectname);
+            ko.applyBindings(new ViewModel());
+        })
+
+
+        function ViewModel() {
+            var self = this;
+            self.report = ko.observableArray();
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: reportdata,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+
+                        //for (var i in json.data) {                                                      
+                        self.report.push(json.data);
+                        //}
+                    }
+                    else {
+
+                        $("#divmessage").append("<span style=\"font-size: 36px\">无报表数据 </span> ");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.msg);
+
+                },
+                timeout: 300000,
+            })
+        }
+
+
+        //  二维码
+        function takecode() {
+            JSBridge.takecode(function (codeInfo, isSuccess) {
+                if (isSuccess == true) {
+                    var obj = eval('(' + codeInfo + ')');
+                    window.location.href = "sign02.html?key=" + obj.code;
+                }
+                else {
+                    alert("失败");
+                }
+            });
+        }
+
+        //千分位表示
+        function format(n) {
+            if (n != null) {
+                var re = /\d{1,3}(?=(\d{3})+$)/g;
+                var n1 = n.replace(/^(\d+)((\.\d+)?)$/, function (s, s1, s2) { return s1.replace(re, "$&,") + s2; });
+                return n1;
+            }
+            else {
+                n = '*';
+            }
+        }
+    </script>
+
+</head>
+<body style="background: url(images/chips.jpg) repeat">
+    <nav id="menu" class="navbar navbar-default  navbar-fixed-top" role="navigation" style="height: 71px; font-size: 14px; padding-top: 10px">
+        <div class="navbar-header" style="height: 70px">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand">时代地产</a>
+        </div>
+        <div class="collapse navbar-collapse" id="example-navbar-collapse" style="height: 70px; font-size: 24px;float:right">
+            <ul class="nav navbar-nav">
+              
+                <li class="active"><a href="report.html">报表</a></li>
+                 <li id="project"><a href="premain.html">项目</a></li>
+                <li><a href="start.html">退出</a></li>
+                <li style="font-size: 16px"><a id="currentProj"></a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+    <div style="padding-top: 70px">
+
+        <div data-bind="foreach: report" style="margin: 0 auto; border: 0px; font-size: 22px; line-height: 200%; text-align: center; ">
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>认筹人数:</th>
+                            <td><span data-bind="text: renchou"></span></td>
+                        </tr>
+                        <tr>
+                            <th>签到人数:</th>
+                            <td><span data-bind="text: qiandao"></span></td>
+                        </tr>
+                        <tr>
+                            <th>认筹未签到人数:</th>
+                            <td><span data-bind="text: renchou - qiandao" style="color: red"></span></td>
+                        </tr>
+                        <tr>
+                            <th>开盘签到率(%):</th>
+                            <td><span data-bind="text: ((qiandao / renchou) * 100).toFixed(1)"></span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>中签确认人数:</th>
+                            <td><span data-bind="text: zhongqian"></span></td>
+                        </tr>
+
+                        <tr>
+                            <th>等待叫号人数:</th>
+                            <td><span data-bind="text: qiandao - zhongqian"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>已选房套数:</th>
+                            <td><span data-bind="text: xuanfang"></span></td>
+                        </tr>
+                        <tr>
+                            <th>已交款套数:</th>
+                            <td><span data-bind="text: jiaokuan"></span></td>
+                        </tr>
+                        <tr>
+                            <th>选房未交款:</th>
+                            <td><span data-bind="text: xuanfang - jiaokuan" style="color: red"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>已打认购书数:</th>
+                            <td><span data-bind="text: rgs"></span></td>
+                        </tr>
+
+                        <tr>
+                            <th>交款未签约:</th>
+                            <td><span data-bind="text: jiaokuan - rgs" style="color: red"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>推盘总套数:</th>
+                            <td><span data-bind="text: roomtotal"></span></td>
+                        </tr>
+                       
+                        <tr>
+                            <th>已成交套数:</th>
+                            <td><span data-bind="text: salenum"></span></td>
+                        </tr>
+                        <tr>
+                            <th>已成交金额(元):</th>
+                            <td><span data-bind="text: format(salemoney)"></span></td>
+                        </tr>
+                         <tr>
+                            <th>成交总面积(㎡):</th>
+                            <td><span data-bind="text: (parseFloat(salearea)).toFixed(1)"></span></td>
+                        </tr>
+                        <tr>
+                            <th>均价(元/㎡):</th>
+                            <td><span data-bind="text: (salemoney / salearea).toFixed(1)"></span></td>
+                        </tr>
+
+
+                        <tr>
+                            <th>解筹率(%):</th>
+                            <td><span data-bind="text: ((xuanfang / renchou) * 100).toFixed(1)"></span></td>
+
+                        </tr>
+                        <tr>
+                            <th>开盘认购率(%):</th>
+                            <td><span data-bind="text: ((salenum / roomtotal) * 100).toFixed(1)"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+<!--callback({
+    "result": true,
+    "msg": "已签到",
+    "data": {
+        "renchouNum": "100",
+        "qiandaoNum": "90",
+        "zhongqianConfirmNum": "60",
+        "houseChosed": "99",
+        "moneyNum": "80",
+        "rengouNUm": "100",
+        "totalArea": "234000",
+        "totalMoney": "234000000"
+    }
+})-->

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest versionCode="0.6">
+	<application setting="true">
+		<name><![CDATA[排队叫号]]></name>
+		<identifie><![CDATA[queuing]]></identifie>
+		<version><![CDATA[0.1]]></version>
+		<type><![CDATA[biz]]></type>
+		<ability><![CDATA[排队叫号]]></ability>
+		<description><![CDATA[排队叫号]]></description>
+		<author><![CDATA[]]></author>
+	</application>
+	<platform>
+		<subscribes>
+		</subscribes>
+		<handles>
+		</handles>
+		<rule embed="false" />
+	</platform>
+	<bindings>
+		<menu>
+			<entry title="排队" do="list" state="" direct="false" />
+			<entry title="大屏幕" do="screen" state="" direct="true" />
+		</menu>
+	</bindings>
+	<install><![CDATA[
+    
+	CREATE TABLE IF NOT EXISTS `ims_call_group`(
+        `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+        `pid` int(11) NOT NULL COMMENT '项目id',
+        `dispnum` smallint(6) UNSIGNED NOT NULL COMMENT '组号',
+        `status` tinyint(4)  UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态',
+        `signednum` tinyint(4) NOT NULL DEFAULT 0 COMMENT '人数',
+        `presetnum` int(10) NOT NULL COMMENT '预设人数',
+        `maxnum` int(10) NOT NULL COMMENT '组最多人数',
+        `called` tinyint(4) unsigned DEFAULT '0'  COMMENT '是否叫号',
+        `calltime` int(10) NOT NULL COMMENT '叫号时间',
+        `createtime` int(10) NOT NULL COMMENT '创建时间',
+        PRIMARY KEY (`id`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+    
+    	DROP TABLE IF EXISTS `ims_sign`;
+    CREATE TABLE IF NOT EXISTS `ims_sign`(
+      `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+      `pid` int(11) NOT NULL COMMENT '项目id',
+      `qrcode` char(36) NOT NULL  COMMENT '认筹单qrcode',
+      `gid` int(10) NOT NULL COMMENT '组号',
+      `signed` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态 0 未签到 1 已签到',
+      `signtime` int(10) NOT NULL COMMENT '签到时间',
+      `preset` tinyint(4) NOT NULL DEFAULT '0' COMMENT '预设 1',
+      `cardid` char(20) NOT NULL COMMENT '证件号码',
+      `cname` varchar(60) NOT NULL COMMENT '姓名',
+      `mobile` varchar(50) NOT NULL COMMENT '手机',
+      PRIMARY KEY(`id`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+    --update `ims_sign` set `called`=0;
+    --update `ims_call_group` set `called`=0,calltime=0;
+    --trancate table `ims_call_group`
+    ]]></install>
+	<uninstall><![CDATA[
+	DROP TABLE IF EXISTS `ims_call_group`;
+	DROP TABLE IF EXISTS `ims_call_setting`;
+	DROP TABLE IF EXISTS `ims_sign`;
+	 ]]></uninstall>
+	<upgrade><![CDATA[]]></upgrade>
+</manifest>

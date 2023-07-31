@@ -1,0 +1,58 @@
+
+{template 'common/header-gw'}
+<!-- Modal -->
+<div class="modal" id="dlg_import" tabindex="-1" role="dialog" aria-labelledby="importLabel" aria-hidden="true">
+   <div class="modal-dialog">
+       <div class="modal-content">
+           <div class="modal-header">
+               <h4 class="modal-title" id="importLabel">{$title}</h4>
+           </div>
+           <div class="modal-body" style="min-height: 160px" >
+               <div class="form-group">
+                   <label id="msg">正在准备中......</label>
+                   <div class="progress  progress-striped active" >
+                       <div id="progressBar" class="progress-bar progress-bar-success" ></div>
+                   </div>
+               </div>
+               <div class="form-group">
+                   <div id="text_show">
+                   </div>
+               </div>
+           </div>
+           <div class="modal-footer">
+               <button type="button" id="close" class="btn btn-default" data-dismiss="modal" data-loading-text="处理中..." >关闭</button>
+           </div>
+       </div>
+   </div>
+</div>
+<script>
+require(['bootstrap'],function($){
+    $('#dlg_import').modal({backdrop: 'static',keyboard: false,show : true});
+    $('#dlg_import').find('.btn').button('loading');
+    $('#dlg_import').on('hidden.bs.modal', function (e) {
+        window.location.href='./?refresh';
+    })
+});
+
+function updateProgress(value,msg){
+    require(['jquery'],function($) {
+        if(value==100||value<0){
+            $('#close').button('reset');
+        }
+        if(value>=0&&value<=100) {
+            $('#progressBar').css('width', value + '%');
+            $('#progressBar').html(value + '%');
+        }
+        if(msg!='') {
+            $('#msg').text(msg);
+        }
+    });
+}
+
+function showLog(log){
+    require(['jquery'],function($) {
+        $('#text_show').append(log);
+    });
+}
+</script>
+{template 'common/footer-gw'}

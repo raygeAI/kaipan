@@ -1,0 +1,42 @@
+
+<form action="{$url}" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="form-confirm">
+<input type="hidden" value="{$_W['token']}" name="token"/>
+    <input type="hidden" value="{$id}" name="id"/>
+    <div class="row">
+        <label class="col-sm-2 control-label text-right">客户名称</label>
+        <div class="col-sm-3">
+            <p >{$user_info['CstName']}</p>
+        </div>
+        <label class="col-sm-2 control-label text-right">{$user_info['CardType']}</label>
+        <div class="col-sm-4">
+            <p >{$user_info['CardID']}</p>
+        </div>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label class="col-sm-2 control-label text-right">认筹来源</label>
+        <div class="col-sm-3">
+            <select name="source" class="form-control">
+                <option value="电商">电商</option>
+                <option value="关系户">关系户</option>
+                <option value="已交款">已交款</option>
+                <option value="无交款确认">无交款确认</option>
+            </select>
+        </div>
+        <label class="col-sm-2 control-label text-right">确认人</label>
+        <div class="col-sm-3">
+            <input type="text" name="operator" class="form-control" value="{$item['operator']}" readonly="readonly">
+        </div>
+    </div>
+    <!--<div class="panel-footer">
+        <div class="btn-group btn-group-justified">
+            <div class="btn-group">
+                <input type="hidden" name="token" value="{$_W['token']}" />
+                <input type="submit" class="btn btn-success" name="submit" value="确认" />
+            </div>
+            <div class="btn-group">
+                <a  class="btn btn-warning" href="{php echo $this->createWebUrl('list');}">取消</a>
+            </div>
+        </div>
+    </div>-->
+</form>

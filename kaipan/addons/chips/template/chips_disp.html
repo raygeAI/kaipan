@@ -1,0 +1,37 @@
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#test1_list" data-toggle="tab">客户基本信息</a></li>
+        <li ><a href="#test2_list" data-toggle="tab">认筹单信息</a></li>
+        {if !empty($pre_bills) }
+        <li ><a href="#test3_list" data-toggle="tab">诚意金</a></li>
+        {/if}
+        {if !empty($order_bills)}
+        <li ><a href="#test4_list" data-toggle="tab">定金</a></li>
+        {/if}
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane  active" id="test1_list">
+            {template 'common/customer_info'}
+        </div>
+
+        <div class="tab-pane " id="test2_list">
+            {template 'common/chips_info'}
+        </div>
+
+        <div class="tab-pane" id="test3_list">
+            <div class="panel panel-default">
+            {loop $pre_bills $bill}
+            {template 'project/pay'}
+            {/loop}
+            </div>
+        </div>
+        
+        <div class="tab-pane"  id="test4_list">
+        <div class="panel panel-default">
+            {loop $order_bills $bill}
+            {template 'project/pay'}
+            {/loop}
+        </div>
+        </div>
+    </div>
+</div>

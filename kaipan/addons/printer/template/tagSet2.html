@@ -1,0 +1,79 @@
+{template 'common/header-project'}
+<style>
+    .account-basicinformation span{font-weight:700;}
+    .account-stat-num > div{width:25%; float:left; font-size:16px; text-align:center;}
+    .account-stat-num > div span{display:block; font-size:30px; font-weight:bold;}
+</style>
+<div class="main">
+    <form action="" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="form1">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                打印模板信息
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <label class="col-sm-2 control-label text-right">模板名称</label>
+                    <div class="col-sm-4">
+                        <label class="control-label" >{$template['title']}</label>
+                    </div>
+                    <label class="col-sm-2 control-label text-right">打印类型</label>
+                    <div class="col-sm-3">
+                        <label class="control-label" >{$printtype[$template['printtype']]}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-2 control-label text-right">适用项目</label>
+                    <div class="col-sm-4">
+                        <label class="control-label" >{php echo empty($template['project'])?'所有':'当前'}</label>
+                    </div>
+                    <label class="col-sm-2 control-label text-right">标签数量</label>
+                    <div class="col-sm-3">
+                        <label class="control-label" >{$template['tagsnum']}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                模板设置
+            </div>
+            <div class ="panel-body">
+                <table class="table table-hover">
+                    <thead class="navbar-inner">
+                    <tr>
+                        <th style="width: 200px">书签名称</th>
+                        <th style="width: 280px">对应数据</th>
+                    </tr>
+                    </thead>
+                    <tbody id="re-items">
+                    {loop $map $k $v}
+                    <tr>
+                        <td><input class="form-control" value="{$k}"  type="text" readonly="readonly"></td>
+                        <td>
+                            <select name="map[{$k}]" class="form-control">
+                                {loop $fields $f}
+                                <option value="{$f}"{if $f == $v} selected="selected"{/if}>{$f}</option>
+                                {/loop}
+                            </select>
+                        </td>
+                    </tr>
+                    {/loop}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="btn-group btn-group-justified">
+            <div class="btn-group">
+                <input type="hidden" name="token" value="{$_W['token']}" />
+                <input type="submit" class="btn btn-success" name="submit" value="确认" />
+            </div>
+
+            <div class="btn-group">
+                <a  class="btn btn-warning" href="{php echo $this->createWebUrl($do);}">返回</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{template 'common/footer'}

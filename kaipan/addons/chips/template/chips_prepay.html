@@ -1,0 +1,137 @@
+{template 'common/header-project'}
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li {if $op=='qrcode'}class="active"{/if}><a href="{php echo $this->createWebUrl('prepay',array('op'=>'qrcode'));}">扫码交款</a></li>
+        <li {if $op=='query'}class="active"{/if}><a href="{php echo $this->createWebUrl('prepay',array('op'=>'query'));}">查询交款</a></li>
+    </ul>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">诚意金交款</div>
+        <div class="panel-body"  >
+            <form action="" method="post" class="form-horizontal" role="form">
+                <input type="hidden" name="token" value="{$_W['token']}" />
+                {if $op=='qrcode'}
+                <div class="row">
+                    <label class=" col-sm-1 control-label">认筹单</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" autocomplete="false" name="keyword" id="guid" type="text" value="{$_GPC['keyword']}">
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-primary" name="submit" type="submit" value="pay">
+                            <i class="fa fa-money"></i>交款</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button  class="btn btn-primary" value="导出" name="submit"><i class="fa fa-inbox"></i>导出</button>
+                    </div>
+                </div>
+                {else}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <select name="query" class="form-control">
+                            <option value="0" {if $_GPC['query']==0}selected{/if}>客户名称</option>
+                            <option value="1" {if $_GPC['query']==1}selected{/if}>证件号码</option>
+                            <option value="2" {if $_GPC['query']==2}selected{/if}>电话号码</option>
+                        </select>
+                    </div>
+                    <label class=" col-sm-1 control-label">关键字</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" name="keyword" id="" type="text" value="{$_GPC['keyword']}">
+                    </div>
+                    <label class=" col-sm-1 control-label">状态</label>
+                    <div class="col-sm-2">
+                        <select name="status" class="form-control">
+                            <option value="-1" {if $selstatus==-1}selected{/if} >所有</option>
+                            {loop $status $k $v}
+                            <option value="{$k}" {if $selstatus==$k}selected{/if}>{$v}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <div class="pull-right  col-md-1">
+                        <button class="btn btn-primary" name="submit" type="submit" value="query"><i class="fa fa-search"></i>搜索</button>
+                    </div>
+
+                </div>
+                {/if}
+            </form>
+        </div>
+
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="min-width:140px;">身份信息</th>
+                <th style="width:120px;">代理信息</th>
+                <th style="width:160px;">票据单号</th>
+                <th style="width:120px;">诚意金(元)</th>
+                <th style="width:70px;">状态</th>
+                <th style="width:100px;">创建时间</th>
+                <th style="width:172px;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td>{$item['cname']}&nbsp;{$item['mobile']}<br/>{$item['cardid']}</td>
+                <td>{$item['agency']}<br/>{$item['salesman']}</td>
+
+                <td>{$item['InvoNo1']}{if !empty($item['Money1'])}<label class="label label-info">￥{php echo number_format($item['Money1'],2)}{/if}</label>
+                <br>{$item['InvoNo2']}{if !empty($item['Money2'])}<label class="label label-info">￥{php echo number_format($item['Money2'],2)}{/if}</label>
+                </td>
+
+                <td>{php echo number_format($item['premoney'],2)}</td>
+                <td>{$status[$item['pretype']]}
+                    {if $item['deleted']}<br/><span class="label label-danger">作废</span>{/if}
+                </td>
+                <td>{php echo date('Y-m-d<br/> H:i:s', $item['createtime'])}</td>
+                <td>
+                    {if $item['pretype']==1||empty($item['pretype'])}
+                    <a href="{php echo $this->createWebUrl($do, array('op'=>'pay','id' => $item['id']))}" title="诚意金交款" class="btn btn-default btn-sm"><i class="fa  fa-money"></i></a>&nbsp;
+                    {/if}
+                    {if $item['premoney']>0}
+                    <a data-id="{$item['id']}" title="打印诚意金票据" class="btn btn-default btn-sm print"><i class="fa  fa-print"></i></a>&nbsp;
+                    {/if}
+                    {if $item['pretype']==2||empty($item['pretype'])}
+                    <a data-id="{$item['id']}" title="无诚意金交款确认" class="btn btn-default btn-sm confirm"><i class="fa fa-check-circle"></i></a>
+                    {/if}
+                </td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        <div class="panel-footer" style="padding-bottom: 1px;">
+            {$pager}
+        </div>
+    </div>
+</div>
+<div id="footer-group" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-print').submit();">打印</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<div id="footer-confirm" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-confirm').submit();">确认</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<script> 
+require(['bootstrap', 'util'],function($, u){
+    $('.print').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo  $this->createWebUrl($do,array('type'=>2, 'op'=>'print'));}"+'&id='+id  , function(data){
+            var obj = u.dialog('打印设置', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+    });
+    
+    $('.confirm').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo  $this->createWebUrl($do,array('type'=>2, 'op'=>'confirm'));}"+'&id='+id  , function(data){
+            var obj = u.dialog('无交款确认', data, $('#footer-confirm').html());
+            obj.modal('show');
+        });
+    });
+
+    $('#guid').focus(function(){
+        $(this).val('');
+    });
+    $('#guid').focus();
+});
+</script>         
+{template 'common/footer'}

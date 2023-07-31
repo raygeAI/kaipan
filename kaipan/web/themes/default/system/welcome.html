@@ -1,0 +1,64 @@
+{template 'common/header-gw'}
+<ol class="breadcrumb">
+	<li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
+	<li class="active">系统</li>
+</ol>	
+<!--内容-->
+	<div class="clearfix" style="margin-bottom:0.5em;">
+		<h5 class="page-header">楼盘项目</h5>
+		<div class="clearfix">
+			<a href="{url 'project/display'}" class="tile tile-2x img-rounded">
+				<i class="fa fa-comments"></i>
+				<span>楼盘项目列表</span>
+			</a>
+            {if $_W['isfounder']}
+            <a href="{url 'project/print'}" class="tile tile-2x img-rounded">
+                <i class="fa fa-print"></i>
+                <span>打印模块管理</span>
+            </a>
+            {/if}
+		</div>
+        {if $_W['isfounder']}
+        <h5 class="page-header">用户管理</h5>
+		<div class="clearfix">
+			<a href="{url 'user/profile'}" class="tile img-rounded">
+				<i class="fa fa-briefcase"></i>
+				<span>我的账户</span>
+			</a>
+			<a href="{url 'user/display'}" class="tile img-rounded">
+				<i class="fa fa-user"></i>
+				<span>用户管理</span>
+			</a>
+			<a href="{url 'user/group'}" class="tile img-rounded">
+				<i class="fa fa-users"></i>
+				<span>用户组管理</span>
+			</a>
+		</div>
+		<h5 class="page-header">系统管理</h5>
+		<div class="clearfix">
+			<a href="{url 'system/updatecache'}" class="tile img-rounded">
+				<i class="fa fa-refresh"></i>
+				<span>更新缓存</span>
+			</a>
+			<a href="{url 'system/database'}" class="tile img-rounded">
+				<i class="fa fa-database"></i>
+				<span>数据库</span>
+			</a>
+			<a href="{url 'system/logs'}" class="tile img-rounded">
+				<i class="fa fa-book"></i>
+				<span>查看日志</span>
+			</a>
+		</div>
+        {else}
+
+		<h5 class="page-header">用户管理</h5>
+		<div class="clearfix">
+			<a href="{url 'user/profile'}" class="tile img-rounded">
+				<i class="fa fa-briefcase"></i>
+				<span>我的账户</span>
+			</a>
+		</div>
+        {/if}
+	</div>
+
+{template 'common/footer-gw'}

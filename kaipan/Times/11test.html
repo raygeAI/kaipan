@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>test</title>
+    <style type="text/css">
+        .one,.two{height:200px;background-color:red;}
+        .two{background-color:yellow;}
+        .main{height:200px;overflow:auto;}
+    </style>
+</head>
+<body>
+  <div style="overflow: hidden; height:30px; width: 330px;" id="latestNews">
+      <div id="newsOne">
+          <!--<li><a href="NewsDetails.aspx?id=592" target="_blank">常用的服装陈列之9种方法</a></li>
+          <li><a href="NewsDetails.aspx?id=591" target="_blank">内衣加盟选址六技巧</a></li>
+          <li><a href="NewsDetails.aspx?id=589" target="_blank">成功分享：亮湾湾饰品店的八大陈列心得</a></li>
+          <li><a href="NewsDetails.aspx?id=588" target="_blank">内衣店接手店铺时应该注意的问题</a></li>
+          <li><a href="NewsDetails.aspx?id=587" target="_blank">三种开女士内衣店的人气店址推荐</a></li>-->
+          <li><a href="NewsDetails.aspx?id=586" target="_blank">201</a></li>
+          <li><a href="NewsDetails.aspx?id=585" target="_blank">550平米</a></li>
+      </div>
+      
+      <div style="overflow: hidden; height: 30px;" id="newsTwo">
+      </div>
+  </div>
+   <script type='text/javascript'>
+
+       //第一种滚动：
+
+       var newsOne = document.getElementById("newsOne");
+       var newsTwo = document.getElementById("newsTwo");
+       var latestNews = document.getElementById("latestNews");
+
+       newsTwo.innerHTML = newsOne.innerHTML;
+       function newsScroll() {
+           if ((latestNews.scrollHeight - latestNews.offsetHeight) <= latestNews.scrollTop)
+               latestNews.scrollTop = 0;
+           else
+               latestNews.scrollTop = latestNews.scrollTop + 1;
+       }
+       setInterval(newsScroll, 100);
+
+ 
+
+       //第二种滚动：（需要设置latestNews的style：position:absolute;）
+       //var newsOne = document.getElementById("newsOne");
+       //var newsTwo = document.getElementById("newsTwo");
+       //var latestNews = document.getElementById("latestNews");
+
+       //newsTwo.innerHTML = newsOne.innerHTML;
+       //function newsScroll() {
+       //    if (newsTwo.offsetTop - latestNews.scrollTop <= 0)
+       //        latestNews.scrollTop -= newsOne.offsetHeight;
+       //    else
+       //        latestNews.scrollTop = latestNews.scrollTop + 3;
+       //}
+       //setInterval(newsScroll, 300);
+
+
+   </script>
+</body>
+</html>
+
+
+ 
+
+ 
+
+ 
+
+ 

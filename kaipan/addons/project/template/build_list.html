@@ -1,0 +1,71 @@
+{template 'common/header-project'}
+
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{php echo $this->createWebUrl('list');}">房间列表</a></li>
+    </ul>
+    <div class="panel panel-info">
+        <div class="panel-heading">筛选</div>
+        <div class="panel-body"  >
+            <form action="{php echo $this->createWebUrl('list');}" method="post" class="form-horizontal" role="form">
+                <div class="row">
+                    <label class=" col-sm-1 control-label">楼栋</label>
+                    <div class="col-sm-2">
+                        <select name="build" class="form-control">
+                            <option value="" {if empty($sel_build)} selected{/if}>所有</option>
+                            {loop $build $b}
+                            <option value="{$b['BldGUID']}" {if $sel_build==$b['BldGUID']}selected{/if} >{$b['BldName']}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <label class=" col-sm-1 control-label">房号</label>
+                    <div class="col-sm-2">
+                        <input class="form-control" name="Room"  type="text" value="{$_GPC['Room']}">
+                    </div>
+                    <label class=" col-sm-1 control-label">状态</label>
+                    <div class="col-sm-2">
+                        <select name="status" class="form-control">
+                            <option value="" selected>所有</option>
+                            <option value="认购" {if $_GPC['status']=='认购'}selected{/if}>认购</option>
+                            <option value="待售" {if $_GPC['status']=='待售'}selected{/if}>待售</option>
+                            <option value="销控" {if $_GPC['status']=='销控'}selected{/if}>销控</option>
+                        </select>
+                    </div>
+                    <div class="pull-right  col-md-1">
+                        <button class="btn btn-primary"><i class="fa fa-search"></i>搜索</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="width:120px;">房间信息</th>
+                <th style="width:120px;">建筑</th>
+                <th style="width:100px;">套内</th>
+                <th style="width:100px;">房间价格计算</th>
+                <th style="width:100px;">状态</th>
+                <th style="width:120px;">客户名称</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td><span class="label label-info">{$item['Room']}</span> &nbsp;{$item['HuXing']}<br/>{$item['ShowCode']}</td>
+                <td>面积:{$item['BldArea']}平方米<br/>单价:{$item['Price']}元</td>
+                <td>面积:{$item['TnArea']}平方米<br/>单价:{$item['TnPrice']}元</td>
+                <td>总价:{$item['Total']}元<br/>
+                    折扣:{$item['DiscntValue']}%<br/>
+                    折后:{$item['RoomTotal']}元</td>
+                <td>{$item['Status']}&nbsp;<span class="label label-success">{$item['VirtualStatus']}</span></td>
+                <td>{$item['CstName']}</td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        <div class="panel-footer" style="padding-bottom: 1px;">
+            {$pager}
+        </div>
+    </div>
+</div>
+{template 'common/footer'}

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta HTTP-EQUIV="Refresh" content="10"/>-->
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
+
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=yes, minimum-scale=1.0, maximum-scale=10.0" />
+    <title>外控表</title>
+    <!--<link rel="stylesheet" href="css/style.css" media="all" />-->
+    <!--<link rel="stylesheet" href="css/dropzone.css" media="all" />-->
+    <link rel="stylesheet" type="text/css" href="bootstrap-3.2.0-dist/css/bootstrap.min.css">
+    <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script src="js/knockout-2.3.0.js"></script>
+    <script src="js/knockout.mapping-latest.js"></script>
+    <script src="js/slide.js"></script>
+    <style type="text/css">
+        a:link {
+            color: #000;
+        }
+
+        /* Custom Styles */
+        ul.nav-tabs {
+            position: fixed;
+            float: right;
+            width: 5%;
+            margin-top: 30%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+        }
+
+            ul.nav-tabs li {
+                margin: 0;
+                border-top: 1px solid #ddd;
+            }
+
+                ul.nav-tabs li:first-child {
+                    border-top: none;
+                }
+
+                ul.nav-tabs li a {
+                    margin: 0;
+                    padding: 8px 16px;
+                    border-radius: 0;
+                }
+
+                ul.nav-tabs li.active a, ul.nav-tabs li.active a:hover {
+                    color: #fff;
+                    background: #0088cc;
+                    border: 1px solid #0088cc;
+                }
+
+                ul.nav-tabs li:first-child a {
+                    border-radius: 4px 4px 0 0;
+                }
+
+                ul.nav-tabs li:last-child a {
+                    border-radius: 0 0 4px 4px;
+                }
+
+            ul.nav-tabs.affix {
+                top: 30px; /* Set the top position of pinned element */
+            }
+    </style>
+
+
+    <script type="text/javascript">
+        var vm;
+
+        var buildingID = getQueryString('buildingID');//楼号              
+        var projguid = getQueryString('projguid');
+        var BldName = getQueryString('BldName');
+
+
+        var token = localStorage.getItem("token");
+        var floorlist;//层数组
+        var Units;//单元
+        var roomnumber = 0;//每层房间数
+        var buildlist = localStorage.getItem("buildlist");//取回room对象          
+        var buildlist = JSON.parse(buildlist);//把字符串转换成JSON对象
+
+        var RoomNoList = [];
+        var ArrRoomNoList = {};
+
+        var divWidth;
+        var testdata = { info: { token: token }, func: 'roominfo', params: { BldGUID: buildingID, projGUID: projguid } };
+
+        $(function () {
+            var projectname = localStorage.getItem("projectname");
+            $("#currentProj").html("当前项目：" + projectname);
+            $("#bldname").text(BldName);
+
+            for (var i in buildlist.data) {
+                for (var j in buildlist.data[i].build) {
+                    var a = buildlist.data[i].build[j];
+
+                    var b = buildlist.data[i].build[j].ProjGUID;
+                    if (buildlist.data[i].build[j].BldGUID == buildingID && buildlist.data[i].build[j].ProjGUID == projguid) {
+                        var str = buildlist.data[i].build[j].FloorList;
+                        floorlist = str.split(",");
+                        for (var m = 0 ; m < floorlist.length; m++) {
+                            if (floorlist[m] == "" || typeof (floorlist[m]) == "undefined") {
+                                floorlist.splice(m, 1);
+                                m = m - 1;
+                            }
+                        };
+                        Units = buildlist.data[i].build[j].Unit;
+
+                        for (var k in Units) {
+                            roomnumber += parseInt(Units[k].DoorNum);//一层几间房
+                            var strr = Units[k].RoomNoList;
+
+                            RoomNoList = strr.split(",");
+                            for (var m = 0 ; m < RoomNoList.length; m++) {
+                                if (RoomNoList[m] == "" || typeof (RoomNoList[m]) == "undefined") {
+                                    RoomNoList.splice(m, 1);
+                                    m = m - 1;
+                                }
+                            };
+                            //ArrRoomNoList.push(RoomNoList);
+                            ArrRoomNoList[Units[k].UnitNo] = RoomNoList;
+
+
+                        }
+                    }
+                }
+
+            }
+            vm = new ViewModel();
+            ko.applyBindings(vm);
+        });
+        //计算层数组里面是m和n之间有几个数
+        function sum(m, n) {
+            var j = 0;
+            for (var i = m; i <= n; i++) {
+                if ($.inArray(i.toString(), floorlist) != -1) {
+                    j++;
+                }
+            }
+            return j;
+        }
+
+        //定义ViewModel
+        function ViewModel() {
+            var timestamp = Date.parse(new Date());
+            var url = localStorage.getItem("url");
+            url = url + "?time=" + timestamp;
+
+            var self = this;
+            self.menu = ko.observableArray();
+            self.menu.push({ taburl: '#room', tabname: '总图' });
+            if (floorlist.length > 0) {
+                self.menu.push({ taburl: '#room1', tabname: '详图' });
+            }
+
+            self.floorlists = ko.observableArray();
+
+            getData(url, function (resData) {
+
+                var koArr = parseBizData(resData);
+                self.floorlists(koArr);
+            });
+        }
+
+        function parseBizData(resData) {
+            var resultArr = new Array();
+
+            var Arr1 = [];//中间数组，放每一层房间的数组
+            var Arr3 = {};
+            var Arr2 = new Arr2();
+            var h = 0;
+
+            for (var j = 0; j < floorlist.length; j++) {
+                var kkk = floorlist[j];//楼层                        
+                for (var i in resData) {
+                    if (resData[i].Floor == floorlist[j]) {
+                        //Arr1[json.data[i].RoomGUID]=json.data[i]; 
+                        Arr1[h] = resData[i]
+                        h++;
+                    }
+
+                }
+
+                //插入空房间数据
+                if (Arr1.length < roomnumber) {
+                    for (var x in ArrRoomNoList) {
+                        for (var k = 0; k < ArrRoomNoList[x].length; k++) {
+                            var q = 0;
+                            var arrUnit = [];
+                            var arrUnit1 = [];
+                            if (Arr1[0].Unit != "") {
+                                for (var i = 0; i < Arr1.length; i++) {
+                                    var oo = ArrRoomNoList[x][k];
+                                    var pp = Arr1[i].No;
+                                    if (x == parseInt(Arr1[i].Unit)) {
+
+                                        arrUnit.push(Arr1[i]);//单元里面的房间
+                                        //arrUnit[x] = Arr1[i].Unit;
+                                    }
+
+                                }
+
+                                if (arrUnit.length == 0) {
+                                    var roombb = new RoomViewModel(x, " ", '#ffffff', ArrRoomNoList[x][k], " ", " ", " ", " ", divWidth, "#")
+                                    Arr1.push(roombb);
+
+                                } else {
+                                    for (var z = 0; z < arrUnit.length; z++) {
+                                        if (ArrRoomNoList[x][k] != arrUnit[z].No) {//单元相同里面比较No                                   
+                                            q++;
+                                            //if (q == Arr1.length) {
+                                            if (q == arrUnit.length) {
+                                                var roomadd = new RoomViewModel(arrUnit[z].Unit, " ", '#ffffff', ArrRoomNoList[x][k], " ", " ", " ", " ", divWidth, "#")
+                                                Arr1.push(roomadd);
+                                                //arrUnit.push(roomadd);
+                                                //arrUnit.sort(function (a, b) { return a.No - b.No });
+                                                q = 0;
+                                            }
+                                        }
+                                    }
+                                    Arr1.sort(function (a, b) { return a.No - b.No });
+                                }
+
+
+                            }
+                            else {
+                                for (var z = 0; z < Arr1.length; z++) {
+                                    if (ArrRoomNoList[x][k] != Arr1[z].No) {//单元相同里面比较No                                   
+                                        q++;
+                                        //if (q == Arr1.length) {
+                                        if (q == Arr1.length) {
+                                            var roomadd = new RoomViewModel(1, " ", '#ffffff', ArrRoomNoList[x][k], " ", " ", " ", " ", divWidth, "#")
+                                            Arr1.push(roomadd);
+                                            //arrUnit.push(roomadd);
+                                            //arrUnit.sort(function (a, b) { return a.No - b.No });
+                                            q = 0;
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    if (Arr1[0].Unit != "") {
+
+                        Arr1.sort(function (a, b) { return a.Unit - b.Unit });
+                        //Arr1.sort(function (a, b) { return a.No - b.No });
+                    }
+                    else {
+                        Arr1.sort(function (a, b) { return a.No - b.No });
+                    }
+                }
+
+                Arr2.floorName = kkk;
+                Arr2.floorValue = Arr1;
+                Arr1 = [];
+                h = 0;
+                Arr3[j] = Arr2;
+                resultArr.push(Arr2);
+                Arr2 = {};
+
+            };
+
+            return resultArr;
+            //self.floorlists = Arr3;
+
+            function Arr2(floorValue, floorName) {
+                var self = this;
+                this.floorValue = floorValue;
+                this.floorName = floorName;
+            }
+        }
+
+        function getData(url, callback) {
+
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: testdata,
+                cache: false,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+
+
+                    for (var i in json.data) {
+                        if (json.data[i].Status == "待售") {
+                            json.data[i].color = '#FFFFFF';//白色
+                        } else if (json.data[i].Status == "销控") {
+                            json.data[i].color = '#808080';//灰色
+                        } else if (json.data[i].Status == "控制") {
+                            json.data[i].color = '#808080';//灰色
+                        } else if (json.data[i].Status == "非售") {
+                            json.data[i].color = '#808080';//灰色
+
+                        } else if (json.data[i].Status == "预约") {
+                            json.data[i].color = '#ff9a00';//橙色
+                        } else if (json.data[i].Status == "预留") {
+                            json.data[i].color = '#ff9a00';//橙色
+                        } else if (json.data[i].Status == "小订") {
+                            json.data[i].color = '#ff9a00';//橙色
+                        } else if (json.data[i].Status == "认购") {
+                            json.data[i].color = '#FF3300';//红色
+                        } else if (json.data[i].Status == "签约") {
+                            json.data[i].color = '#FF3300';//红色
+                        } else if (json.data[i].Status == "选房") {
+                            json.data[i].color = '#9F5F9F';//紫色
+                        } else if (json.data[i].Status == "交款") {
+                            json.data[i].color = '#FFFF00';//黄色
+                        } else if (json.data[i].Status == "确认") {
+                            json.data[i].color = '#FF3300';//红色
+                        } else if (json.data[i].Status == "超时") {
+                            json.data[i].color = '#00FF00';//绿色
+                        }
+                        json.data[i].url = 'roomnei02.html?buildingid=' + json.data[i].BldGUID + '&roomid=' + json.data[i].RoomGUID + '&projguid=' + projguid + '&Room=' + json.data[i].Room;
+
+                        switch (roomnumber) {
+                            case 3:
+                                divWidth = "30%";
+                                json.data[i].width = "30%";
+                                break;
+                            case 4:
+                                divWidth = "22.5%";
+                                json.data[i].width = "22.5%";
+                                break;
+                            case 5:
+                                divWidth = "18%";
+                                json.data[i].width = "18%";
+                                break;
+                            case 6:
+                                divWidth = "15%";
+                                json.data[i].width = "15%";
+                                break;
+                            case 7:
+                                divWidth = "13%";
+                                json.data[i].width = "13%";
+                                break;
+                            case 8:
+                                divWidth = "11%";
+                                json.data[i].width = "11%";
+
+                        }
+                    };
+
+                    if (callback) {
+                        callback(json.data);
+                    }
+
+
+                }
+            });
+        }
+
+
+        //数组中相同元素的个数
+        function count(arr, element) {
+            var count = 0;
+            for (var i in arr) {
+                if (arr[i] == element) count++;
+            }
+            return count;
+        }
+
+        //定义room数据对象
+        function RoomViewModel(Unit, Room, color, No, BldArea, Total, RoomTotal, BldCjPrice, width, url) {
+            var self = this;
+            self.Unit = Unit;
+            self.Room = Room;
+            self.color = color;
+            self.No = No;
+            self.BldArea = BldArea;
+            self.Total = Total;
+            self.RoomTotal = RoomTotal;
+            self.BldCjPrice = BldCjPrice;
+            self.width = width;
+            self.url = url;
+
+        }
+
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+
+
+
+
+
+        //千分位表示
+        function format(n) {
+            if (n != null) {
+                var re = /\d{1,3}(?=(\d{3})+$)/g;
+                var n1 = n.replace(/^(\d+)((\.\d+)?)$/, function (s, s1, s2) { return s1.replace(re, "$&,") + s2; });
+                return n1;
+            }
+            else {
+                n = '*';
+            }
+        }
+
+
+        //每5秒执行get()函数;
+        setInterval(function () {
+            var timestamp = Date.parse(new Date());
+            var url = localStorage.getItem("url");
+            url = url + "?time=" + timestamp;
+            getData(url, function (res) {
+                var koArr = parseBizData(res);
+                //vm = "";
+                //var vm = new ViewModel();
+                //vm.floorlists([]);//清空数据
+                vm.floorlists.length = 0;
+                vm.floorlists(koArr);
+            });
+
+        }, 5000);
+
+
+
+
+    </script>
+</head>
+<body style="background-color: #FFE4B5">
+
+    <nav id="menu" class="navbar navbar-default  navbar-fixed-top" role="navigation" style="height: 71px; font-size: 14px; padding-top: 10px">
+        <div class="navbar-header" style="height: 70px">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" >时代地产</a>
+        </div>
+        <div class="collapse navbar-collapse" id="example-navbar-collapse" style="height: 70px; font-size: 24px">
+            <ul class="nav navbar-nav">
+                <li><a href="main.html">首页</a></li>
+                <li><a href="room.html">选房</a></li>
+                <li><a href="report.html">报表</a></li>
+                <li class="active"><a href="roomnei.html">内控表</a></li>
+                <li style="font-size: 16px"><a id="currentProj"></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <a name="top" id="top"></a>
+    <section class="content" style="margin-top: 80px; margin-left: 0;">
+
+        <div id="tab1" style="float: right; width: 10%; margin: 0; padding: 0">
+            <ul id="myTab" class="nav nav-tabs nav-stacked" style="width: 10%">
+                <li><a href="#room" data-toggle="tab" style="height: 60px; padding-top: 15px; font-size: 18px;">总图</a></li>
+                <li><a href="#room1" data-toggle="tab" style="height: 60px; padding-top: 15px; font-size: 18px;">详图</a></li>
+                <li><a href="#top" target="_self" style="height: 60px; padding-top: 15px; font-size: 18px;">顶部</a></li>
+                <li><a href="#bottom" target="_self" style="height: 60px; padding-top: 15px; font-size: 18px;">底部</a></li>
+                <li><a href="" onclick="javascript:window.location.href='roomnei.html' " data-toggle="tab" style="height: 60px; padding-top: 15px; font-size: 18px;">返回</a></li>
+            </ul>
+        </div>
+           <div style="text-align: center; padding-top: 10px; padding-bottom: 10px">
+                <span style="font-size: 24px;" id="bldname"></span>
+
+            </div>
+        <!--总图-->
+        <div id="myTabContent" class="tab-content" style="margin-left: 2%; margin-right: 2%">
+         
+
+            <div style="margin: 0 auto" class="tab-pane fade in active" id="room" data-bind="template: { name: 'floorTemplate', foreach: floorlists, as: 'floorlists' }">
+
+                <script type="text/html" id="floorTemplate">
+
+                    <table style="margin: auto">
+                        <tr>
+                            <!--<td style="width: 50px">
+                                 <span data-bind="text: floorName" ></span>
+                            </td>-->
+                            <td>
+                                <span data-bind="template: { name: 'floorValueTemplate', foreach: floorValue, as: 'floorValue' }"></span>
+                            </td>
+                        </tr>
+                    </table>
+
+                </script>
+                <script type="text/html" id="floorValueTemplate">
+                    <span style="width: 80px; height: 26px; padding-top: 2px; padding-bottom: 2px; float: left; border: 1px solid #FFE4B5; text-align: center" data-bind="style: { backgroundColor: color }">
+                        <span data-bind="text: Room "></span>
+                        <br />
+                        <!--序号<span data-bind="text:No"></span>-->
+                    </span>
+
+                </script>
+            </div>
+
+            <!--详图-->
+            <div style="margin: 0 auto" class="tab-pane fade" id="room1" data-bind="template: { name: 'rooms1Template', foreach: floorlists, as: 'floorlists' }">
+                <script type="text/html" id="rooms1Template">
+
+                    <div style="margin: 0 auto" data-bind="template: { name: 'Rooms1floorValueTemplate', foreach: floorValue, as: 'floorValue' }"></div>
+                </script>
+                <script type="text/html" id="Rooms1floorValueTemplate">
+
+                    <div style="float: left; border: 1px solid blue; text-align: center; margin-left: 2px; height: 280px" data-bind="style: { backgroundColor: color, width: width }">
+                        <a data-bind="attr: { href: url }">
+                            <h1><span data-bind="    text: Room"></span></h1>
+                           <!-- <h3><span data-bind="    text: Status"></span></h3>-->
+                            <p>
+                                建筑面积(㎡)<br />
+                                <span data-bind="text: BldArea"></span>
+                            </p>
+                            <p>
+                                面价(元)<br />
+                                <span data-bind="text: format(Total)"></span>
+                            </p>
+                            <p>
+                                折后价(元)<br />
+                                <span style="font-size: 17px" data-bind="text: format(RoomTotal)"></span>
+                            </p>
+                            <p>
+                                折后单价(元)<br />
+                                <span data-bind="text: format(BldCjPrice)"></span>
+                            </p>
+                        </a>
+                        <!--  序号<span data-bind="text:No"></span>-->
+                    </div>
+
+                </script>
+
+            </div>
+
+        </div>
+
+    </section>
+    <a name="bottom" id="bottom"></a>
+
+
+    <nav class="navbar navbar-default  navbar-fixed-bottom" role="navigation" style="height: 50px; font-size: 22px; padding-bottom: 2px">
+        <div class="collapse navbar-collapse" id="Div1" style="height: 50px">
+            <ul class="nav navbar-nav">
+                <li>
+                    <canvas id="myCanvas" style="height: 20px; width: 20px">your browser does not support the canvas tag </canvas>
+
+                    <script type="text/javascript">
+
+                        var canvas = document.getElementById('myCanvas');
+                        var ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, 300, 150);
+
+                    </script>
+                </li>
+                <li>待售</li>
+                <li>
+                    <canvas id="Canvas1" style="height: 20px; width: 20px"></canvas>
+
+                    <script type="text/javascript">
+
+                        var canvas = document.getElementById('Canvas1');
+                        var ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#ff9a00';
+                        ctx.fillRect(0, 0, 300, 150);
+
+                    </script>
+                </li>
+                <li>预留</li>
+                <li>
+                    <canvas id="Canvas2" style="height: 20px; width: 20px">your browser does not support the canvas tag </canvas>
+
+                    <script type="text/javascript">
+
+                        var canvas = document.getElementById('Canvas2');
+                        var ctx = canvas.getContext('2d');
+                        ctx.fillStyle = ' #9F5F9F';
+                        ctx.fillRect(0, 0, 300, 150);
+
+                    </script>
+                </li>
+                <li>已选未交款</li>
+                <li>
+                    <canvas id="Canvas3" style="height: 20px; width: 20px">your browser does not support the canvas tag </canvas>
+
+                    <script type="text/javascript">
+
+                        var canvas = document.getElementById('Canvas3');
+                        var ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#FFFF00';
+                        ctx.fillRect(0, 0, 300, 150);
+
+                    </script>
+                </li>
+                <li>已选已交款</li>
+                <li>
+                    <canvas id="Canvas4" style="height: 20px; width: 20px">your browser does not support the canvas tag </canvas>
+
+                    <script type="text/javascript">
+
+                        var canvas = document.getElementById('Canvas4');
+                        var ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#00FF00';
+                        ctx.fillRect(0, 0, 300, 150);
+
+                    </script>
+                </li>
+                <li>过期未交款</li>
+                <li>
+                    <canvas id="Canvas5" style="height: 20px; width: 20px">your browser does not support the canvas tag </canvas>
+
+                    <script type="text/javascript">
+
+                        var canvas = document.getElementById('Canvas5');
+                        var ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#FF3300';
+                        ctx.fillRect(0, 0, 300, 150);
+
+                    </script>
+                </li>
+                <li>已签认购书</li>
+                <li>
+                    <canvas id="Canvas6" style="height: 20px; width: 20px">your browser does not support the canvas tag </canvas>
+
+                    <script type="text/javascript">
+
+                        var canvas = document.getElementById('Canvas6');
+                        var ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#808080';
+                        ctx.fillRect(0, 0, 300, 150);
+
+                    </script>
+                </li>
+                <li>控制房源</li>
+
+
+            </ul>
+        </div>
+    </nav>
+
+</body>
+</html>

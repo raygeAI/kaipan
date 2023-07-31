@@ -1,0 +1,81 @@
+{template 'common/header-project'}
+<style>
+    .account-basicinformation span{font-weight:700;}
+    .account-stat-num > div{width:25%; float:left; font-size:16px; text-align:center;}
+    .account-stat-num > div span{display:block; font-size:30px; font-weight:bold;}
+</style>
+<div class="main">
+    <form action="" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="form1">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                认筹单基本信息
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <label class="col-sm-2 control-label text-right">二维码</label>
+                    <div class="col-sm-5">
+                        <label class="control-label" >{$chips['qrcode']}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-2 control-label text-right">客户名称</label>
+                    <div class="col-sm-3">
+                        <label class="control-label" >{$user_info['CstName']}</label>
+                    </div>
+                    <label class="col-sm-2 control-label text-right">{$user_info['CardType']}</label>
+                    <div class="col-sm-4">
+                        <label class="control-label" >{$user_info['CardID']}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-heading">
+                房间信息
+            </div>
+            <div class ="panel-body">
+                <div class = "row">
+                    <label class = "col-sm-2 control-lable text-right" >房号</label>
+                    <div class = "col-sm-3">
+                        <p>{$chips['roomcode']}</p>
+                    </div>
+                    <label class = "col-sm-2 control-lable text-right" >房间状态</label>
+                    <div class = "col-sm-3">
+                        <p>{if $chips['roomstatus']==1}已选房{/if}</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                交款信息
+            </div>
+            <div class ="panel-body">
+                <div class = "row">
+                    <label class = "col-sm-2 control-lable text-right" >诚意金交款</label>
+                    <div class = "col-sm-3">
+                        <p>{php echo number_format($chips['premoney'],2)}(元)</p>
+                    </div>
+                    <label class = "col-sm-2 control-lable text-right" >定金交款</label>
+                    <div class = "col-sm-3">
+                        <p>{php echo number_format($chips['ordermoney'],2)}(元)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group btn-group-justified">
+            {if !$confirmed}
+            <div class="btn-group">
+                <input type="hidden" name="token" value="{$_W['token']}" />
+                <input type="submit" class="btn btn-success" name="submit" value="确认" />
+            </div>
+            {/if}
+            <div class="btn-group">
+                <a  class="btn btn-warning" href="{php echo $this->createWebUrl($do);}">{if $confirmed}返回{else}取消{/if}</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{template 'common/footer'}

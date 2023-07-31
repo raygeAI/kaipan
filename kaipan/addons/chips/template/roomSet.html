@@ -1,0 +1,44 @@
+<div class="clearfix user-browser">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input id="sel_room" type="text" class="form-control" value="{$_GPC['uids']}" readonly="readonly" />
+                    <div class="input-group-btn">
+                        <a class="btn btn-default" onclick="$('#sel_room').val('');" title="清除数据"><i class="fa fa-times"></i></a>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-addon">代码</span>
+                    <input id="keyword" type="text" class="form-control" value="{$_GPC['keyword']}" />
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" title="房间代码查询过滤" onclick="{$callback}.pIndex=1;{$callback}.query();"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table tb">
+            <thead>
+            <tr>
+                <th style="width:140px;">房间代码</th>
+                <th style="width:120px;">建筑</th>
+                <th style="width:120px;">套内</th>
+                <th style="width: 70px;" class="text-center">选择</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td class="code">{$item['ShowCode']}</td>
+                <td>{$item['BldArea']}</td>
+                <td>{$item['TnArea']}</td>
+                <td><a href="#" onclick="selroom(this);" >选择</a></td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        {$pager}
+    </div>
+</div>        

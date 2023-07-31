@@ -1,0 +1,143 @@
+{template 'common/header-project'}
+<style>
+    .account-basicinformation span{font-weight:700;}
+    .account-stat-num > div{width:25%; float:left; font-size:16px; text-align:center;}
+    .account-stat-num > div span{display:block; font-size:30px; font-weight:bold;}
+</style>
+<div class="main">
+    <form action="" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="form1">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                认筹单基本信息
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <label class="col-sm-2 control-label text-right">二维码</label>
+                    <div class="col-sm-5">
+                        <label class="control-label" >{$chips['qrcode']}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-2 control-label text-right">客户名称</label>
+                    <div class="col-sm-3">
+                        <label class="control-label" >{$user_info['CstName']}</label>
+                    </div>
+                    <label class="col-sm-2 control-label text-right">{$user_info['CardType']}</label>
+                    <div class="col-sm-4">
+                        <label class="control-label" >{$user_info['CardID']}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-heading">
+                房间信息
+            </div>
+            <div class ="panel-body">
+                <div class = "row">
+                    <label class = "col-sm-2 control-lable text-right" >房号</label>
+                    <div class = "col-sm-3">
+                        <p>{$chips['roomcode']}</p>
+                    </div>
+
+                    <label class = "col-sm-2 control-lable text-right" >应付定金</label>
+                    <div class = "col-sm-3">
+                        <p>{php echo number_format($chips['shouldpay'], 2);}</p>
+                    </div>
+                </div>
+                <div class = "row">
+                    <label class = "col-sm-2 control-lable text-right" >房间状态</label>
+                    <div class = "col-sm-3">
+                        <p>{if $chips['roomstatus']==1}已选房{/if}</p>
+                    </div>
+                    <label class = "col-sm-2 control-lable text-right" >已付金额</label>
+                    <div class = "col-sm-3">
+                        <p>{php echo number_format($totalMoney, 2);}</p>
+                    </div>
+                </div>
+            </div>
+            {loop $printed_Bills $bill}
+            {if !empty($bill['Printed'])}
+            {template 'project/pay'}
+            {/if}
+            {/loop}
+        </div>
+        {if !empty($inputBill)}
+        <div class="panel panel-default">
+            {php $bill=$inputBill}
+            {template 'project/pay'}
+        </div>
+        {/if}
+        <div class="btn-group btn-group-justified">
+            <input type="hidden" name="token" value="{$_W['token']}" />
+            {if !empty($inputBill)&&!$disableEdit}
+            <div class="btn-group">
+                <input type="submit" class="btn btn-success" name="submit" value="录入确认" />
+            </div>
+            {/if}
+            {if $disableEdit&&$enable}
+            <div class="btn-group">
+                <a  class="btn btn-success print" data-id="{$id}" href="#"><i class="fa fa-print"></i>打印</a>
+            </div>
+            {/if}
+            <div class="btn-group">
+                <a  class="btn btn-warning" href="{$url}">返回</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="footer-group" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-print').submit();">打印</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<script> 
+require(['bootstrap', 'util'],function($, u){
+    $('.print').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo  $this->createWebUrl($do,array('type'=>2, 'op'=>'print'));}"+'&id='+id  , function(data){
+            var obj = u.dialog('打印设置', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+    });
+        $('#form1').submit(function() {
+            var isError = false;
+            var money=0;
+            var regexp = /(^[0-9]+$)|(^[0-9]+)(.[0-9]{1,2}$)/;
+            $('#re-items .money').each(function(){
+                if(!regexp.test($(this).val())){
+                    isError = true;
+                }else{
+                    money+=parseFloat($(this).val());
+                }
+            });
+            if(isError) {
+                u.message('明细必须录入正确的金额.');      return false;
+            }
+            if(money<=0) {
+                u.message('录入金额合计错误.请录入正确的明细记录');      return false;
+            }
+            return true;
+        });
+    });
+    function addItem() {
+        var html = '' +
+                '<tr>' +
+                '<td><input name="finance[money][]" type="text" class="form-control money" /></td>' +
+                '<td>' +
+                '<select name="finance[bank][]" class="form-control">' +
+                '<option value="{$bank['name']}">{$bank['name']}</option>'+
+        {loop $banks $k}{if $k['name']!=$bank['name']}'<option value="{$k['name']}">{$k['name']}</option>' +{/if}{/loop}
+        '</select>' +
+        '</td>' +
+        '<td><input name="finance[FsettleNo][]" type="text" class="form-control" /></td>' +
+        '<td><input name="finance[note][]" type="text" class="form-control" /></td>' +
+        '<td><a href="javascript:;" onclick="deleteItem(this)" class="fa fa-times-circle"  title="删除此条目"></a></td>' +
+        '</tr>';
+        $('#re-items').append(html);
+    }
+    function deleteItem(o) {
+
+        $(o).parent().parent().remove();
+
+    }
+</script>
+{template 'common/footer'}

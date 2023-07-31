@@ -1,0 +1,56 @@
+{template 'common/header-project'}
+<div class="main">
+    <div class="panel panel-info">
+        <div class="panel-heading">打印机列表</div>
+        <div class="panel-body"  >
+            <form action="{php echo $this->createWebUrl('printer');}" method="post" class="form-horizontal" role="form">
+                <div class="row">
+
+                    <label class=" col-sm-2 control-label">打印机名称</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" name="keyword" id="" type="text" value="{$_GPC['keyword']}">
+                    </div>
+                    <label class=" col-sm-1 control-label">状态</label>
+                    <div class="col-sm-2">
+                        <select name="status" class="form-control">
+                            <option value="-1" {if $selstatus==-1}selected{/if} >所有</option>
+                            {loop $status $k $v}
+                            <option value="{$k}" {if $selstatus==$k}selected{/if}>{$v}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <div class="pull-right  col-md-1">
+                        <button class="btn btn-primary"><i class="fa fa-search"></i>搜索</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="min-width:220px;">打印机名称</th>
+                <th style="width:160px;">打印服务名</th>
+                <td>本地</td>
+                <th style="width:160px;">汇报时间</th>
+                <th style="width:100px;">状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td>{$item['title']}</td>
+                <td>{$item['modulename']}</td>
+                <td>{$item['local']}</td>
+                <td>{php echo date('Y-m-d H:i:s',$item['reporttime']);}</td>
+                <td>{$item['status']}</td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        <div class="panel-footer" style="padding-bottom: 1px;">
+            {$pager}
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="./resource/js/lib/jquery-1.11.1.min.js"></script>
+{template 'common/footer'}

@@ -1,0 +1,161 @@
+{template 'common/header-gw'}
+<ol class="breadcrumb">
+	<li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
+	<li><a href="{url 'system/welcome'}">站点信息设置</a></li>
+	<li class="active">{if $do == 'copyright'}站点信息{elseif $do == 'close'}关闭站点{/if}</li>
+</ol>
+<ul class="nav nav-tabs">
+	<li{if $do == 'copyright'} class="active"{/if}><a href="{php echo url('system/site');}">站点信息</a></li>
+	<li{if $do == 'close'} class="active"{/if}><a href="{php echo url('system/site/close');}">关闭站点</a></li>
+</ul>
+<div class="clearfix">
+{if ($do == 'copyright')}
+	<h5 class="page-header">版权信息</h5>
+	<form action="" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data">
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">网站名称</label>
+			<div class="col-sm-10">
+				<input type="text" name="sitename" class="form-control" value="{$settings['sitename']}" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">网站URL</label>
+			<div class="col-sm-10">
+				<input type="text" name="url" class="form-control" value="{$settings['url']}" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">keywords</label>
+			<div class="col-sm-10">
+				<input type="text" name="keywords" class="form-control" value="{$settings['keywords']}" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">description</label>
+			<div class="col-sm-10">
+				<input type="text" name="description" class="form-control" value="{$settings['description']}" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">前台LOGO</label>
+			<div class="col-sm-10">
+				{php echo tpl_form_field_image('flogo', $settings['flogo'], '', $options = array('global' => true));}
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">后台LOGO</label>
+			<div class="col-sm-10">
+				{php echo tpl_form_field_image('blogo', $settings['blogo'], '', $options = array('global' => true));}
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">第三方统计代码</label>
+			<div class="col-sm-10">
+				<textarea style="height:150px;" class="form-control" cols="70" name="statcode" autocomplete="off">{$settings['statcode']}</textarea>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">底部左侧自定义</label>
+			<div class="col-sm-10">
+				<textarea style="height:150px;" class="form-control" cols="70" name="footerleft" autocomplete="off">{$settings['footerleft']}</textarea>
+				<span class="help-block">自定义底部左侧信息，支持HTML</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">底部右侧自定义</label>
+			<div class="col-sm-10">
+				<textarea style="height:150px;" class="form-control" cols="70" name="footerright" autocomplete="off">{$settings['footerright']}</textarea>
+				<span class="help-block">自定义底部右侧信息，支持HTML</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">联系电话</label>
+			<div class="col-sm-10">
+				<input type="text" name="phone" class="form-control" value="{$settings['phone']}" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">QQ</label>
+			<div class="col-sm-10">
+				<input type="text" name="qq" class="form-control" value="{$settings['qq']}" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">邮箱</label>
+			<div class="col-sm-10">
+				<input type="text" name="email" class="form-control" value="{$settings['email']}" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">详细地址</label>
+			<div class="col-sm-10">
+				<input type="text" name="address" value="{$settings['address']}"  class="form-control" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">地理位置</label>
+			<div class="col-sm-10">
+				{php echo tpl_form_field_coordinate('baidumap', $settings['baidumap'])}
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-1 col-xs-12 col-sm-10 col-md-10 col-lg-11">
+				<input name="submit" type="submit" value="提交" class="btn btn-primary span3" />
+				<input type="hidden" name="token" value="{$_W['token']}" />
+			</div>
+		</div>
+	</form>
+{/if}
+{if ($do == 'close')}
+	<h5 class="page-header">关闭站点</h5>
+	<form action="" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="form1">
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">关闭站点</label>
+			<div class="col-sm-10">
+				<label class="radio-inline">
+					<input type="radio" name="status" value="1" > 是
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="status" value="0" checked="checked" > 否
+				</label>
+			</div>
+		</div>
+		<div class="form-group reason" style="display:none;">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">关闭原因</label>
+			<div class="col-sm-10">
+				<textarea style="height:150px;" class="form-control" cols="70" name="reason" autocomplete="off">{$settings['close']['reason']}</textarea>
+				<input type="hidden" name="reasons" value="{$settings['close']['reason']}">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-1 col-xs-12 col-sm-10 col-md-10 col-lg-11">
+				<input name="submit" type="submit" value="提交" class="btn btn-primary span3" />
+				<input type="hidden" name="token" value="{$_W['token']}" />
+			</div>
+		</div>
+	</form>
+	<script type="text/javascript">
+		require(['jquery', 'util'],function($, u){
+			$("#form1").submit(function() {
+				if ($("input[name='status']:checked").val() == 1) {
+					if ($("textarea[name='reason']").val() == '') {
+						u.message('请填写站点关闭原因');
+						return false;
+					}
+				}
+			});
+			$("input[name='status']").click(function() {
+				if ($(this).val() == 1) {
+					$(".reason").show();
+					var reason = $("input[name='reasons']").val();
+					$("textarea[name='reason']").text(reason);
+				} else {
+					$(".reason").hide();
+					$("textarea[name='reason']").text("");
+				}
+			});
+		});
+	</script>
+{/if}
+</div>
+{template 'common/footer-gw'}

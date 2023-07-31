@@ -1,0 +1,44 @@
+<form method="post" action="{$url}" id="form-set" class="form-horizontal" role="form" style="min-height: 120px">
+    <input type="hidden" name="token" value="{$_W['token']}" />
+    <br/>
+    <div class="form-group">
+        <label class="col-md-2 control-label">诚意金</label>
+        <div class = "col-md-8">
+            <div class = "input-group">
+                <span class="input-group-addon">票据批次</span>
+                <input class="form-control" name='prepay[BatchNo]' value="{$prepay['BatchNo']}">
+                <span class="input-group-addon">编号前缀</span>
+                <input class="form-control" name='prepay[Prefix]' value="{$prepay['Prefix']}">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">定金</label>
+        <div class = "col-md-8">
+            <div class = "input-group">
+                <span class="input-group-addon">票据批次</span>
+                <input class="form-control" name='order[BatchNo]' value="{$order['BatchNo']}">
+                <span class="input-group-addon">编号前缀</span>
+                <input class="form-control" name='order[Prefix]' value="{$order['Prefix']}">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">认购书</label>
+        <div class = "col-md-8">
+            <div class="input-group">
+                <span class="input-group-addon">编号前缀</span>
+                <input class="form-control" name='Prefix' value="{$set['Prefix']}">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">认筹书</label>
+        <div class = "col-md-8">
+            <div class="input-group">
+                <span class="input-group-addon">编号前缀</span>
+                <input class="form-control" name='ChipsPre' value="{$set['ChipsPre']}">
+            </div>
+        </div>
+    </div>
+</form>

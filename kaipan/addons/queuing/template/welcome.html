@@ -1,0 +1,34 @@
+{template 'common/header-project'}
+<style>
+    .account-basicinformation span{font-weight:700;}
+    .account-stat-num > div{width:25%; float:left; font-size:16px; text-align:center;}
+    .account-stat-num > div span{display:block; font-size:30px; font-weight:bold;}
+</style>
+<div class="main">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            签到统计
+        </div>
+        <div class="panel-body">
+            <div class="account-stat-num row">
+                <div>总人数<span>{$count[0]}</span></div>
+                <div>签到人数<span>{$count[2]}</span></div>
+                <div>交款人数<span>{$count[2]}</span></div>
+            </div>
+        </div>
+        <div class="panel-heading">
+            定金统计
+        </div>
+        <div class="panel-body">
+            <div class="account-stat-num row">
+                <div>总人数<span>{$premoney['num']}</span></div>
+                <div >诚意金总额<span id="total1" >{php number_format($premoney['total']);}</span></div>
+ 
+                <div>总人数<span>{$ordermoney['num']}</span></div>
+                <div>认购交款总额<span id="total2">{php number_format($ordermoney['total'],2);}</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{template 'common/footer'}

@@ -1,0 +1,144 @@
+{template 'common/header-base'}
+<style>
+body{ background:url(./resource/images/shattered.png)}
+
+@media (min-width:768px) {
+.container {
+	width: 650px
+}
+.navbar-right {
+	margin:-3px -90px 0 0 !important;
+}
+}
+@media (min-width:992px) {
+.container {
+	width: 73%
+}
+.navbar-right {
+	margin:-3px -100px 0 0 !important;
+}
+}
+@media (min-width:1200px) {
+.container {
+	width: 75%
+}
+.navbar-right {
+	margin:-3px -120px 0 0 !important;
+}
+}
+@media (min-width:1400px) {
+.container {
+	width: 75%
+}
+}
+@media (min-width:1600px) {
+.container {
+	width: 75%
+}
+}
+@media (min-width:1700px) {
+.container {
+	width: 80%
+}
+}
+
+.navbar-right {
+	margin:-3px -90px 0 0;}
+	
+.container {
+	width: 73%
+}
+</style>
+<div class="navbar navbar-static-top header" role="navigation"  style=" background:url(./resource/images/index_bg_01.png) repeat-x scroll top #EBEBEB;">
+    <div class="container" style=" background:url(./resource/images/index_bg_06.png) repeat-x scroll top #EBEBEB">
+	<div style=" width:40px; height:61px; float:left; margin:0 0 0 -54px;background:url(./resource/images/index_bg_03.png) no-repeat scroll  #EBEBEB;">
+	</div>
+        <div style="margin-left: 40px;text-align: center; ">
+            <div class="navbar-brand">
+                <a  class="navbar-brand mini-logo" href="./?refresh" ></a>
+            </div>
+            <ul class="nav navbar-nav">
+                {php global $Modules;}
+                {loop $Modules $_row}
+                <li{if $_row['name'] == $solution['name']} class="active"{/if}><a href="{$_row['url']}"><i class="fa fa-2x {$_row['icon']}"></i>{$_row['title']}</a></li>
+                {/loop}
+                {php unset($_row);}
+            </ul>
+        </div>
+
+		<div style=" width:40px; height:61px; float:right; margin:-1px -50px 0 0;background:url(./resource/images/index_bg_05.png) no-repeat scroll top #EBEBEB;">
+			        <ul class="nav navbar navbar-right" >
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user">&nbsp;</i>{$GLOBALS['_W']['username']}<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{url 'user/profile/profile'}" target="_blank"><i class="fa fa-weixin fa-fw"></i> 我的账号</a></li>
+                    {if $_W['role'] != 'operator'}
+                    <li class="divider"></li>
+                    <li><a href="{url 'system/welcome'}" target="_blank"><i class="fa fa-sitemap fa-fw"></i> 系统选项</a></li>
+                    <li class="divider"></li>
+                    {/if}
+                    <li><a href="{url 'user/logout'}"><i class="fa fa-sign-out fa-fw"></i> 退出系统</a></li>
+                </ul>
+            </li>
+        </ul>
+	</div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    {if defined('IN_MESSAGE')}
+    <div class="jumbotron clearfix alert alert-{$label}">
+        <div class="row">
+            <div class="col-xs-12 col-sm-3 col-lg-2">
+                <i class="fa fa-5x fa-{if $label=='success'}check-circle{/if}{if $label=='danger'}times-circle{/if}{if $label=='info'}info-circle{/if}{if $label=='warning'}exclamation-triangle{/if}"></i>
+            </div>
+            <div class="col-xs-12 col-sm-8 col-md-9 col-lg-10">
+                {if is_array($msg)}
+                <h2>MYSQL 错误：</h2>
+                <p>{php echo cutstr($msg['sql'], 300, 1);}</p>
+                <p><b>{$msg['error'][0]} {$msg['error'][1]}：</b>{$msg['error'][2]}</p>
+                {else}
+                <h2>{$caption}</h2>
+                <p>{$msg}</p>
+                {/if}
+                {if $redirect}
+                <p><a href="{$redirect}">如果你的浏览器没有自动跳转，请点击此链接</a></p>
+                <script type="text/javascript">
+                    setTimeout(function () {
+                        location.href = "{$redirect}";
+                    }, 3000);
+                </script>
+                {else}
+                <p>[<a href="javascript:history.go(-1);">点击这里返回上一页</a>] &nbsp; [<a href="./?refresh">首页</a>]</p>
+                {/if}
+            </div>
+            {else}
+            <div class="row">
+                {php $frames = empty($frames) ? $GLOBALS['frames'] : $frames; _calc_current_frames($frames);}
+                {if !empty($frames)}
+                <div class="col-xs-12 col-sm-3 col-lg-2">
+                    {loop $frames $k $frame}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title"><a data-toggle="collapse" href="#frame-{$k}">{$frame['title']}</a></h4>
+                        </div>
+                        <ul class="list-group in" id="frame-{$k}">
+                            {loop $frame['items'] $link}
+                            {if !empty($link['append'])}
+                            <li class="list-group-item{$link['active']}">
+                                <a href="{$link['url']}">{$link['title']}</a>
+                                <a class="pull-right" href="{$link['append']['url']}">{$link['append']['title']}</a>
+                            </li>
+                            {else}
+                            <a class="list-group-item{$link['active']}" href="{$link['url']}">{$link['title']}</a>
+                            {/if}
+                            {/loop}
+                        </ul>
+                    </div>
+                    {/loop}
+                </div>
+                <div class="col-xs-12 col-sm-9 col-lg-10">
+                    {else}
+                    <div>
+                        {/if}
+                        {/if}

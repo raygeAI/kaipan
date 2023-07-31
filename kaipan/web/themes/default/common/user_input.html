@@ -1,0 +1,75 @@
+<div class="form-group">
+    <label class="col-sm-2 control-label">客户名称</label>
+    <div class="col-sm-3">
+        <input type="hidden" name="user[CstGUID]" value="{$user_info['CstGUID']}"/>
+        <input type="text" id="CstName" name="user[CstName]" value="{$user_info['CstName']}"
+               class="form-control notempty"/>
+    </div>
+    <label class="col-sm-2 control-label">性别</label>
+    <div class="col-sm-3">
+        <label class="radio-inline">
+            <input type="radio" name="user[Gender]" value="男" {if '男'==$user_info['Gender']}checked="checked"{/if}/>男
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="user[Gender]" value="女" {if '女'==$user_info['Gender']}checked="checked"{/if}/>女
+        </label>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">证件类型</label>
+    <div class="col-sm-3">
+        <select name="user[CardType]" class="form-control">
+            {loop $cardTypes $type}
+            <option value="{$type}"
+            {if $type==$user_info['CardType']}selected {/if}>{$type}</option>
+            {/loop}
+        </select>
+    </div>
+    <label class="col-sm-2 control-label">证件号码</label>
+    <div class="col-sm-3">
+        <input type="text" name="user[CardID]" class="form-control notempty" value="{$user_info['CardID']}"/>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">通讯地址</label>
+    <div class="col-sm-8">
+        <div class="input-append"><input type="text" name="user[Address]" id="location" value="{$user_info['Address']}" class="form-control"/></div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label tel">手机号码</label>
+    <div class="col-sm-3">
+        <input type="text" id="mobile" name="user[MobileTel]" class="form-control notempty" value="{$user_info['MobileTel']}" placeholder="">
+    </div>
+    <label class="col-sm-2 control-label">家庭电话</label>
+    <div class="col-sm-3">
+        <input type="text" name="user[HomeTel]" class="form-control" value="{$user_info['HomeTel']}" placeholder="请输入家庭电话号码"/>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">工作电话</label>
+    <div class="col-sm-3">
+        <input type="text" name="user[OfficeTel]" class="form-control" value="{$user_info['OfficeTel']}">
+    </div>
+    <label class="col-sm-2 control-label">邮政编码</label>
+    <div class="col-sm-3">
+        <input type="text" name="user[PostCode]" class="form-control" value="{$user_info['PostCode']}">
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">国籍</label>
+    <div class="col-sm-3">
+        <select name="user[Country]" class="form-control">
+            <option value="中国" {if $user_info['Country']=="中国"}selected{/if}>中国</option>
+            <option value="其他" {if $user_info['Country']=="其他"}selected{/if}>其他</option>
+        </select>
+    </div>
+    <label class="col-sm-2 control-label">客户分类</label>
+    <div class="col-sm-3">
+        <select name="user[KhFl]" class="form-control">
+            {loop $khTypes $type}
+            <option value="{$type}" {if $type==$user_info['KhFl']} selected{/if}>{$type}</option>
+            {/loop}
+        </select>
+    </div>
+</div>

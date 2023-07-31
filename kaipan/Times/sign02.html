@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
+    <link href="css/jq_div_css.css" rel="stylesheet" />
+
+    <title>Times Property</title>
+    <!--<link href="bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" />-->
+    <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script src="js/knockout-2.3.0.js"></script>
+    <script src="js/jq_div_fuc.js"></script>
+    <script src="js/common.js"></script>
+
+
+    <style type="text/css">
+        /*.center {
+            width: auto;
+            display: table;
+            margin-left: auto;
+            margin-right: auto;
+            border: 0px;
+            font-size: 26px;
+            line-height: 200%;
+        }
+
+        .customer {
+            width: auto;
+            display: table;
+            margin: 30px 50px;
+            text-align: left;
+            border: 0px;
+            font-size: 26px;
+            line-height: 200%;
+        }
+
+        table {
+            margin-top: 50px;
+            /*background-color:red;
+        }
+
+        table, tr {
+            border: 1px solid green;
+            /*text-align: left;
+        }
+
+        td {
+            background-color: green;
+            width: 20%;
+        }*/
+    </style>
+    <script type="text/javascript">
+        var projectguid = localStorage.getItem("projectguid");
+        var projectname = localStorage.getItem("projectname");
+
+
+        var key = getQueryString('key');
+        var token = localStorage.getItem("token");
+        var url = localStorage.getItem("url");
+
+
+        var testdata = { info: { token: token }, func: 'sign', params: { qrcode: key, projguid: projectguid } };
+        $(function () {
+            $("#currentProj").html("当前项目：" + projectname);
+            ko.applyBindings(new ViewModel());
+        })
+
+        function ViewModel() {
+            var self = this;
+            self.sign = ko.observableArray();
+
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: testdata,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+                        self.sign.push(json.data);
+                        var status = json.msg;
+                       
+                        $("#status").html(status);
+                    }
+                    else {
+                        $("#divmessage").append("<span style=\"font-size: 36px\">无效认筹单 </span> <br>");
+                    }
+                    //jAlert(status, '签到信息');
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.msg);
+
+                },
+                timeout: 30000,
+            })
+
+        }
+
+
+
+
+
+
+
+    </script>
+
+</head>
+<body style="background-color: #ffd800">
+
+
+    <div id="divmessage" style="text-align: center; font-size: 24px; margin: 0 auto; padding-top: 200px; width: 500px; height: 500px">
+        <div id="status" style="font-size: 36px; background-color: red"></div>
+        <div data-bind="foreach: sign" style="padding-top: 50px">
+            <table style="margin: auto">
+                <tr>
+                    <td>组&#12288; &#12288;号：</td>
+                    <td><span data-bind="text: gid"></span></td>
+                </tr>
+                <tr>
+                    <td>客户名称：</td>
+                    <td><span data-bind="text: cname"></span></td>
+                </tr>
+                <tr>
+                    <td>证件号码：</td>
+                    <td><span data-bind="text: cardid"></span></td>
+                </tr>
+                <tr>
+                    <td>手&#12288; &#12288;机：</td>
+                    <td><span data-bind="text: mobile"></span></td>
+                </tr>
+                <!-- <tr><td>状&#12288; &#12288;态：</td><td><span data-bind="text: (signed == 1) ? '签到成功' : '签到失败'"></span></td></tr>-->
+                <tr>
+                    <td>签到时间：</td>
+                    <td><span data-bind="text: signtime"></span></td>
+                </tr>
+            </table>
+            <button class="btn btn-primary btn-large" type="button" style="width: 150px; margin-top: 250px" onclick="javascript:window.location.href='main.html'">返回</button>
+        </div>
+    </div>
+
+
+    <div id="floatBoxBg"></div>
+    <div id="floatBox" class="floatBox">
+        <div class="title">
+            <h4>标题</h4>
+            <span>关闭</span></div>
+        <div class="content">内容</div>
+    </div>
+
+</body>
+</html>

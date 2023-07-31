@@ -1,0 +1,125 @@
+{template 'common/header-project'}
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li {if $op=='qrcode'}class="active"{/if}><a href="{php echo $this->createWebUrl($do, array('op'=>'qrcode'));}">确认认购</a></li>
+        <li {if $op=='query'}class="active"{/if}><a href="{php echo $this->createWebUrl($do, array('op'=>'query'));}">查询认购</a></li>
+    </ul>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <span>认购书信息</span>
+        </div>
+        <div class="panel-body"  >
+            <form action="" method="post" class="form-horizontal" role="form">
+                <input type="hidden" name="token" value="{$_W['token']}" />
+                {if $op=='qrcode'}
+                <div class="row">
+                    <label class=" col-sm-1 control-label">认筹单</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" autocomplete="false" name="keyword" id="guid" type="text" value="">
+                    </div>
+                    <div class="col-md-5 " >
+                        <button class="btn btn-primary" name="submit" type="submit" value="pay">
+                            <i class="fa fa-search"></i>确认认购</button>
+                    </div>
+                </div>
+                {else}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <select name="query" class="form-control">
+                            <option value="0" {if $_GPC['query']==0}selected{/if}>客户名称</option>
+                            <option value="1" {if $_GPC['query']==1}selected{/if}>证件号码</option>
+                            <option value="2" {if $_GPC['query']==2}selected{/if}>电话号码</option>
+                        </select>
+                    </div>
+                    <label class=" col-sm-1 control-label">关键字</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" name="keyword" id="" type="text" value="{$_GPC['keyword']}">
+                    </div>
+                    <label class=" col-sm-1 control-label">状态</label>
+                    <div class="col-sm-2">
+                        <select name="status" class="form-control">
+                            <option value="-1" {if $selstatus==-1}selected{/if} >所有</option>
+                            {loop $status $k $v}
+                            <option value="{$k}" {if $selstatus==$k}selected{/if}>{$v}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <div class="pull-right  col-md-1">
+                        <button class="btn btn-primary" name="submit" type="submit" value="query"><i class="fa fa-search"></i>搜索</button>
+                    </div>
+                </div>
+                {/if}
+            </form>
+        </div>
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="min-width:200px;">身份信息</th>
+                <th style="width:120px;">房间信息</th>
+                <th style="width:140px;">代理信息</th>
+                <th style="width:200px;">定金(元)</th>
+                <th style="width:220px;">认购书信息</th>
+                <th style="width:180px;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td>{$item['cname']}&nbsp;{$item['mobile']}<br/>{$item['cardid']}</td>
+                <td>{$item['roomcode']}</td>
+                <td>{$item['agency']}<br/>{$item['salesman']}</td>
+
+                <td>房间定金：{php echo number_format($item['shouldpay'],2)}<br>
+                    已交金额：{php echo number_format($item['_money'],2)}<br>
+                    {if empty($item['_need'])}<span class="label label-info">已足定</span>{else}{php echo "需补定：".number_format($item['_need'],2)}{/if}<br>
+                </td>
+                <td>{if empty($item['ProtocolNO'])}未生成{else}编号：{$item['ProtocolNO']}<br>{php echo date('Y-m-d H:i:s',$item['QSDate']);}{/if}
+                </td>
+                <td>
+
+                    <a href="{php echo $this->createWebUrl($do, array('id' => $item['id'], 'op' => 'dispfee'))}" title="查看" class="btn btn-default btn-sm"><i class="fa fa-eye"></i></a>&nbsp;
+                    {if $item['ordermoney']+$item['premoney']>=$item['shouldpay']}
+                    <a data-id="{$item['id']}" title="打印" class="btn btn-default btn-sm print"><i class="fa fa-print"></i></a>&nbsp;
+                    {/if}
+                </td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        <div class="panel-footer" style="padding-bottom: 1px;">
+            {$pager}
+        </div>
+    </div>
+</div>
+<div id="footer-group" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-print').submit();">打印</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<div id="footer-delete" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-delete').submit();">删除</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<script> 
+require(['bootstrap', 'util'],function($, u){
+    $('.print').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo $this->createWebUrl($do,array('op'=>'print'));}"+'&id='+id  , function(data){
+            var obj = u.dialog('打印设置', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+    });
+
+    $('.delete').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo  $this->createWebUrl('DelHolder');}"+'&id='+id  , function(data){
+            var obj = u.dialog('权益人设置', data, $('#footer-delete').html());
+            obj.modal('show');
+        });
+    })
+    $('#guid').focus(function(){
+        $(this).val('');
+    });
+    $('#guid').focus();
+});
+</script> 
+{template 'common/footer'}

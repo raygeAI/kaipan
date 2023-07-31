@@ -1,0 +1,72 @@
+{template 'common/header-project'}
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li ><a href="{php echo $this->createWebUrl('template');}">打印模板列表</a></li>
+        {if $id}<li class="active"><a href="{php echo $this->createWebUrl('template');}">编辑打印模板</a></li>
+        {else}<li class="active"><a href="{php echo $this->createWebUrl('template',array('op'=>'post'));}">增加打印模板</a></li>
+        {/if}
+    </ul>
+    <form action="" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="form1">
+        <input class="hidden" value="{$items['id']}">
+        <div class="panel panel-info">
+            <div class="panel-heading">打印模板</div>
+            <div class="panel panel-body">
+                <div class="form-group">
+                    <label class=" col-sm-2 control-label">模板名称</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" name="title"  type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class=" col-sm-2 control-label">打印类型</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" name="printtype">
+                            {loop $printtype $k $v}
+                            <option value="{$k}" >{$v}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <label class=" col-sm-2 control-label">适应项目</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" name="onlyCurr">
+                            <option value="0" >所有项目</option>
+                            <option value="1" >当前项目</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class=" col-sm-2 control-label">模板文件</label>
+                    <div class="col-sm-6">
+                         <input id="wordfile" name="wordfile" type="file" style="display:none">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="filename" placeholder="请选择docx类型模板">
+                              <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"  onclick="$('input[id=wordfile]').click();">选择模板</button>
+                              </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="panel-footer">
+            <input type="hidden" name="token" value="{$_W['token']}" />
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success" name="submit" value="submit">提交</button>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-warning" href="{php echo $this->createWebUrl('template');}">取消</a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    require(['jquery'], function($) {
+        $('input[id=wordfile]').change(function() {
+            $('#filename').val($(this).val());
+        });
+    });
+</script>
+{template 'common/footer'}

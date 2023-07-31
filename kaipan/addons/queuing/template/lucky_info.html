@@ -1,0 +1,27 @@
+<form method="post" action="{$url}" id="form-set" class="form-horizontal" role="form" style="min-height: 120px">
+    <input type="hidden" name="token" value="{$_W['token']}" />
+    <div class="form-group">
+        <div class="col-sm-3">
+            <i class="fa fa-5x fa-{if $ok}check-circle{else}times-circle{/if} fa-lg"></i>
+        </div>
+        <div class="col-sm-9">
+           <h3>{$message}</h3>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label text-right">客户名称</label>
+        <div class="col-sm-3">
+            <label class="control-label">{$chips['cname']}</label>
+        </div>
+        <label class="col-sm-2 control-label text-right">手机号码</label>
+        <div class="col-sm-3">
+            <label class="control-label">{$chips['mobile']}</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label text-right">证件号码</label>
+        <div class="col-sm-4">
+            <label class="control-label">{$chips['cardid']}</label>
+        </div>
+    </div>
+</form>

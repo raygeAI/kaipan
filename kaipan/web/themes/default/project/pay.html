@@ -1,0 +1,105 @@
+
+{if empty($bill['Printed'])}
+<div class="panel-heading">
+    <span>交款单据</span>
+    {if !empty($disableEdit)}
+    <div class="pull-right">
+        <a class="btn" href="{$urlEdit}"><i class="fa fa-edit"></i>修改</a>
+    </div>
+    {/if}
+</div>        
+{else}
+<div class="panel-heading">{if $bill['BillType']==1}诚意金{else}定金{/if}已交款单据({$bill['InvoNo']})</div>
+<div class="panel-body">
+    <div class="row">
+        <label class="col-sm-2 control-label text-right">开票人</label>
+        <div class="col-sm-3">
+            <label class="control-label">{$bill['Kpr']}</label>
+        </div>
+        <label class="col-sm-2 control-label text-right">开票日期</label>
+        <div class="col-sm-3">
+            <label class="control-label">{$bill['KpDate']}</label>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 control-label text-right">票据批次号</label>
+        <div class="col-sm-3">
+            <label class="control-label">{$bill['BatchNo']}</label>
+        </div>
+        <label class="col-sm-2 control-label text-right">票据编号</label>
+        <div class="col-sm-3">
+            <label class="control-label">{$bill['InvoNo']}</label>
+        </div>
+    </div>
+</div>
+{/if}
+{if !empty($bill['Printed'])||$disableEdit}        
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th style="width:140px;">金额</th>
+        <th style="min-width:200px;max-width:300px">入帐银行</th>
+        <th style="width:160px;">转帐单编号</th>
+        <th style="min-width:160px;">摘要</th>
+    </tr>
+    </thead>
+    <tbody >
+    {loop $bill['finance'] $f}
+    <tr>
+        <td>{$f['money']}</td>
+        <td>{$f['bank']}</td>
+        <td>{$f['FsettleNo']}</td>
+        <td>{$f['note']}</td>
+    </tr>
+    {/loop}
+    </tbody>
+</table>
+{else}
+<div class="panel-body">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th style="width:140px;">金额</th>
+            <th style="min-width:200px;max-width:300px">入帐银行</th>
+            <th style="width:160px;">转帐单编号</th>
+            <th style="min-width:160px;">摘要</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="re-items" >
+ 
+        {loop $bill['finance'] $f}
+        <tr>
+            <td><input name="finance[money][]" type="text" class="form-control money" value="{$f['money']}" /></td>
+            <td>
+                <select name="finance[bank][]" class="form-control">
+                    <option value="{$bank['name']}" selected>{$bank['name']}</option>
+                    {loop $banks $k}
+                    {if $k['id']!=$bank['id']}
+                    <option value="{$k['name']}"{if $k['name'] == $f['bank']} selected="selected"{/if}>{$k['name']}</option>
+                    {/if}
+                    {/loop}
+                </select>
+            </td>
+            <td><input name="finance[FsettleNo][]" type="text" class="form-control" value="{$f['FsettleNo']}" /></td>
+            <td><input name="finance[note][]" type="text" class="form-control" value="{$f['note']}" /></td>
+            <td>
+                {if empty($bill['Printed'])}
+                <a href="javascript:;" onclick="deleteItem(this)" title="删除此条目" class="fa fa-times-circle" ></a>
+                {else}
+                <span class="label label-waring">禁止修改</span>
+                {/if}
+            </td>
+        </tr>
+        {/loop}
+        </tbody>
+    </table>
+    {if empty($bill['Printed'])}
+    <div >
+        <a href="javascript:;" onclick="addItem();"><i class="fa fa-plus-circle" title="添加填写项目"></i> 添加填写项目</a>
+    </div>
+    {/if}
+</div>        
+
+
+{/if} 

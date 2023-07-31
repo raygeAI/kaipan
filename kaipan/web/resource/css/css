@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'PT Sans Narrow';
+  font-style: normal;
+  font-weight: 400;
+  src: local('PT Sans Narrow'), local('PTSans-Narrow'), url(http://fontstatic.useso.com/s/ptsansnarrow/v7/UyYrYy3ltEffJV9QueSi4RdbPw3QSf9R-kE0EsQUn2A.woff) format('woff');
+}
+@font-face {
+  font-family: 'Volkhov';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Volkhov Bold'), local('Volkhov-Bold'), url(http://fontstatic.useso.com/s/volkhov/v8/bfl1JD3mxnmq4NrdCJOHxRsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+@font-face {
+  font-family: 'Volkhov';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Volkhov Italic'), local('Volkhov-Italic'), url(http://fontstatic.useso.com/s/volkhov/v8/Y_Jmwi-iHxNj27PG4ILsdT8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}

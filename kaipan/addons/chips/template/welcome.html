@@ -1,0 +1,60 @@
+{template 'common/header-project'}
+<style>
+    .account-basicinformation span{font-weight:700;}
+    .account-stat-num > div{width:25%; float:left; font-size:16px; text-align:center;}
+    .account-stat-num > div span{display:block; font-size:30px; font-weight:bold;}
+</style>
+<div class="main">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            认筹单统计
+        </div>
+        <div class="panel-body">
+            <div class="account-stat-num row">
+                <div>总人数<span>{$count[0]}</span></div>
+                <div>登记未处理人数<span>{$count[1]}</span></div>
+                <div>付款人数<span>{$count[2]}</span></div>
+                <div>确认人数<span>{$count[3]}</span></div>
+            </div>
+        </div>
+        <div class="panel-heading">
+            诚意金交款统计
+        </div>
+        <div class="panel-body">
+            <div class="account-stat-num row">
+                <div>总人数<span>{$premoney['num']}</span></div>
+                <div >诚意金总额<span id="total1" >{$premoney['total']}</span></div>
+            </div>
+        </div>
+        <div class="panel-heading">
+            认购交款统计
+        </div>
+        <div class="panel-body">
+            <div class="account-stat-num row">
+                <div>总人数<span>{$ordermoney['num']}</span></div>
+                <div>认购交款总额<span id="total2">{$ordermoney['total']}</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    require(['jquery', 'util'],function($, u){
+
+        var n=$('#total1').text();
+        $('#total1').text(format(n)+'元') ;
+        var n2=$('#total2').text();
+        $('#total2').text(format(n2)+'元') ;
+
+    });
+    function format(n) {
+        if (n != null) {
+            var re = /\d{1,3}(?=(\d{3})+$)/g;
+            var n1 = n.replace(/^(\d+)((\.\d+)?)$/, function (s, s1, s2) { return s1.replace(re, "$&,") + s2; });
+            return n1;
+        }
+        else {
+            n = '*';
+        }
+    }
+</script>
+{template 'common/footer'}

@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="gb2312">
+    <title>Times Property</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="robots" content="" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/style.css" media="all" />
+    <link rel="stylesheet" href="css/dropzone.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="bootstrap-3.2.0-dist/css/bootstrap.min.css">
+    <!--[if IE]><link rel="stylesheet" href="css/ie.css" media="all" /><![endif]-->
+
+    <script src="js/jquery-1.8.0.min.js"></script>
+    <script src="js/jquery.wysiwyg.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="js/jquery.checkbox.min.js"></script>
+    <!--<script src="js/flot.js"></script>
+<script src="js/flot.resize.js"></script>
+<script src="js/flot-time.js"></script>
+<script src="js/flot-pie.js"></script>
+<script src="js/flot-graphs.js"></script>
+<script src="js/cycle.js"></script>-->
+    <script src="js/jquery.tablesorter.min.js"></script>
+    <!--<script src="js/dropzone.js"></script>-->
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            (function ($) {
+                $.getUrlParam = function (name) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    var r = window.location.search.substr(1).match(reg);
+                    if (r != null) return unescape(r[2]); return null;
+                }
+            })(jQuery);
+            var color = $.getUrlParam('color');
+            if (color == "red")
+                $('#url').attr('href', 'choose31.html');
+            else if (color == "white")
+                $('#url').attr('href', 'choose3.html');
+
+        });
+    </script>
+</head>
+<body>
+    <div class="testing">
+       <!-- <header class="main">
+            <h1><strong>Retina</strong> Dashboard</h1>
+            <input type="text" value="search" />
+        </header>-->
+        <section class="user">
+            <div class="profile-img">
+                <p>
+                    <img src="images/uiface2.png" alt="" height="40" width="40" />
+                    Welcome back John Doe
+                </p>
+            </div>
+            <div class="buttons">
+                <button class="ico-font">&#9206;</button>
+                
+                <span class="button">Help</span>
+                <span class="button blue"><a href="index.html">Logout</a></span>
+            </div>
+        </section>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="main.html"><span class="icon">&#128711;</span> 首页</a></li>
+            <li>
+                <a href="sign01.html"><span class="icon">&#128196;</span> 签到</a>
+                <!--<ul class="submenu">
+				<li><a href="page-new.html">Create page</a></li>
+				<li><a href="page-timeline.html">View pages</a></li>
+			</ul>	-->
+            </li>
+            <li class="section">
+                <a href="room.html"><span class="icon">&#127748;</span> 选房 </a>
+                <!--<ul class="submenu">
+				<li><a href="files-upload.html">Upload file</a></li>
+				<li><a href="files.html">View files</a></li>
+			</ul>-->
+            </li>
+            <li>
+                <a href="blog-timeline.html"><span class="icon">&#59160;</span> 内控表 </a>
+                <!--<ul class="submenu">
+				<li><a href="blog-new.html">New post</a></li>
+				<li><a href="blog-table.html">All posts</a></li>
+				<li><a href="comments-timeline.html">View comments</a></li>
+			</ul>-->
+            </li>
+            <li><a href="statistics.html"><span class="icon">&#128202;</span> 外控表</a></li>
+            <li><a href="users.html"><span class="icon">&#128101;</span> Users </li>
+            <li>
+                <a href="ui-elements.html"><span class="icon">&#9881;</span> UI Elements</a>
+                <ul class="submenu">
+                    <li><a href="icon-fonts.html">Icon fonts</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+
+    
+    <!--  <section class="alert">
+        <div class="green">
+            <p>Hi Lee, you have <a href="#">3 new pages</a> and <a href="#">16 comments</a> to approve, better get going!</p>
+            <span class="close">&#10006;</span>
+        </div>
+    </section>-->
+    <section class="content" style="margin-top: 0">
+        <section class="widget" style="border: 0">
+            <div class="row">
+               
+                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px">
+                    <div id="divmessage" class="thumbnail" style="border: 0px; font-size: 25px; line-height: 200%}">
+                        <p>是否确定认购？</p>
+
+                    </div>
+                </div>
+                <div class="span12" style="text-align: center; margin-top: 100px">
+                    <span style="text-align: center; margin-right: 30px"><a href="choose41.html">
+                        <button class="btn btn-primary btn-large" type="button" style="width: 20%">确定</button>
+                    </a></span>
+                    <span style="text-align: center; margin-left: 30px"><a href="room.html">
+                        <button class="btn btn-primary btn-large" type="button" style="width: 20%">取消</button></a></span>
+                </div>
+        </section>
+    </section>
+
+</body>
+
+
+</html>

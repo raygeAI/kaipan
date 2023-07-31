@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>项目选择</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="robots" content="" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
+
+    <link rel="stylesheet" href="css/style.css" media="all" />
+    <link href="bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script src="js/knockout-2.3.0.js"></script>
+    <script type="text/javascript">
+        var url = localStorage.getItem("url");
+        var token = localStorage.getItem("token");
+        var projdata = { info: { token: token }, func: 'projlist', param: {} };
+        var projectguid;
+        var projectname;
+        var h = 0;
+        $(function () {
+            var vm = new ViewModel();
+            ko.applyBindings(vm);
+        })
+
+        function ViewModel() {
+            var self = this;
+            self.selectOptions = ko.observableArray();
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: projdata,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+
+          
+
+                        for (var i in json.data) {
+                            //self.projects.push(json.data[i]);
+                            self.selectOptions.push(json.data[i]);
+                            h++;
+                            localStorage.setItem("projectnum",h);
+
+                        }
+                        if (h = 1) {
+                            projectname = json.data[0].projname;//获取Select选择的Text
+                            projectguid = json.data[0].projguid;//获取Select选择的Value
+                            localStorage.setItem("projectname", projectname);
+                            localStorage.setItem("projectguid", projectguid);
+                            var builddata = { info: { token: token }, func: 'buildlist', params: { projguid: projectguid } };
+                            $.ajax({
+                                url: url,
+                                dataType: 'jsonp',
+                                data: builddata,
+                                //jsonp: 'callbackparam',
+                                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                                success: function (json) {
+                                    if (json.result) {
+                                        buildlist = JSON.stringify(json);//将JSON对象转化成字符串
+                                        localStorage.setItem("buildlist", buildlist);//用localStorage保存转化好的的字符串
+
+                                        var modules = [];
+                                        for (var i in json.right) {
+                                            modules.push(json.right[i]);
+                                            //localStorage.setItem("modules",modules);
+                                        }
+
+                                        //$.inArray()确定第一个参数在数组中的位置，没有则返回-1；
+                                        var a = $.inArray("4", modules);
+
+                                        if (($.inArray("4", modules) == -1) && ($.inArray("3", modules) == -1) && ($.inArray("2", modules) == -1) && ($.inArray("1", modules) != -1)) {
+                                            location.href = "main01.html";//签到组
+                                        }
+                                        else if (($.inArray("4", modules) == -1) && ($.inArray("3", modules) == -1) && ($.inArray("1", modules) == -1) && ($.inArray("2", modules) != -1)) {
+                                            location.href = "room_xuanfang.html";//选房组
+                                        } else if (($.inArray("4", modules) == -1) && ($.inArray("2", modules) == -1) && ($.inArray("1", modules) == -1) && ($.inArray("3", modules) != -1)) {
+                                            location.href = "report_baobiao.html";//报表组
+                                        } else if (($.inArray("3", modules) == -1) && ($.inArray("2", modules) == -1) && ($.inArray("1", modules) == -1) && ($.inArray("4", modules) != -1)) {
+                                            location.href = "roomnei_neikong.html";//内控组
+                                        }
+                                        else if (($.inArray("3", modules) != -1) && ($.inArray("2", modules) != -1) && ($.inArray("1", modules) != -1) && ($.inArray("4", modules) != -1)) {
+                                            location.href = "main.html";//
+                                        }
+                                        else if (($.inArray("3", modules) == -1) && ($.inArray("2", modules) == -1) && ($.inArray("1", modules) == -1) && ($.inArray("4", modules) == -1) && ($.inArray("5", modules) != -1)) {
+                                            location.href = "zhongqian.html";//中签组
+                                        }
+                                        else {
+                                            alert("无权限");
+                                            location.href = "start.html";
+                                        }
+                                    }
+                                    else {
+                                        alert("无项目数据！");
+                                        window.location.href = "start.html";
+
+                                    }
+                                },
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                    alert("无法获取数据，请重试");
+                                    window.location.href = "start.html";
+                                },
+                                timeout: 30000,
+                            })
+
+                        }
+                        else {
+                            $("#project").show();
+                        }
+                    }
+                    else {
+                        alert("无项目数据！");
+                        window.location.href = "start.html";
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("无法获取数据，请重试");
+                    window.location.href = "start.html";
+                    //alert(XMLHttpRequest.msg);
+                },
+                timeout: 5000,
+            })
+        }
+
+        function build() {
+            projectname = $("#proj").find("option:selected").text();  //获取Select选择的Text
+            projectguid = $("#proj").val();  //获取Select选择的Value
+            localStorage.setItem("projectname", projectname);
+            localStorage.setItem("projectguid", projectguid);
+
+            var builddata = { info: { token: token }, func: 'buildlist', params: { projguid: projectguid } };
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: builddata,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+                        buildlist = JSON.stringify(json);//将JSON对象转化成字符串
+                        localStorage.setItem("buildlist", buildlist);//用localStorage保存转化好的的字符串
+
+                        var modules = [];
+                        for (var i in json.right) {
+                            modules.push(json.right[i]);
+                            //localStorage.setItem("modules",modules);
+                        }
+
+                        //$.inArray()确定第一个参数在数组中的位置，没有则返回-1；
+                        var a = $.inArray("4", modules);
+
+                        if (($.inArray("4", modules) == -1) && ($.inArray("3", modules) == -1) && ($.inArray("2", modules) == -1) && ($.inArray("1", modules) != -1)) {
+                            location.href = "main01.html";//签到组
+                        }
+                        else if (($.inArray("4", modules) == -1) && ($.inArray("3", modules) == -1) && ($.inArray("1", modules) == -1) && ($.inArray("2", modules) != -1)) {
+                            location.href = "room_xuanfang.html";//选房组
+                        } else if (($.inArray("4", modules) == -1) && ($.inArray("2", modules) == -1) && ($.inArray("1", modules) == -1) && ($.inArray("3", modules) != -1)) {
+                            location.href = "report_baobiao.html";//报表组
+                        } else if (($.inArray("3", modules) == -1) && ($.inArray("2", modules) == -1) && ($.inArray("1", modules) == -1) && ($.inArray("4", modules) != -1)) {
+                            location.href = "roomnei_neikong.html";//内控组
+                        }
+                        else if (($.inArray("3", modules) != -1) && ($.inArray("2", modules) != -1) && ($.inArray("1", modules) != -1) && ($.inArray("4", modules) != -1)) {
+                            location.href = "main.html";
+                        }
+                        else {
+                            alert("无权限");
+                        }
+
+                    }
+                    else {
+                        alert("无项目数据！");
+                        window.location.href = "main.html";
+
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("无法获取数据，请重试");
+                    window.location.href = "main.html";
+                },
+                timeout: 30000,
+            })
+        }
+
+    </script>
+</head>
+<body class="login" style="overflow: hidden">
+ 
+        <div id="project" style="margin: 0 auto; width: 600px; height: 70px; font-size: 36px;padding-top:200px;display:none">
+            <span style="color: #fff">选择项目： </span>
+            <select id="proj" style="width: 400px" data-bind="options: selectOptions, optionsCaption: '请选择', optionsText: 'projname', optionsValue: 'projguid'"></select>
+            <br />
+            <button type="button" class="btn btn-primary btn-large" style="margin-top: 250px; height: 70px; font-size: 36px" onclick="build()">确   认</button>
+
+        </div>
+
+
+</body>
+</html>

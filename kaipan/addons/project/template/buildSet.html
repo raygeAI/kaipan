@@ -1,0 +1,38 @@
+<form method="post" action="{$url}" id="form-set" class="form-horizontal" role="form" style="min-height: 120px">
+    <input type="hidden" value="{$_W['token']}" name="token"/>
+    <div class="form-group">
+        <label class="col-sm-3 control-label" >请选择楼栋</label>
+        <div class="col-md-8">
+            <label  class=" control-label" ><input type="checkbox" rel="{$key}" class="check_all" /> 所有楼栋</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" ></label>
+        <div class="col-md-10">
+            {loop $builds $key $build}
+            <label>
+            <input type="checkbox" value="{$build['BldGUID']}" name="m_ids[]" {if $build['Status']==1}checked{/if} />{$build['BldName']}
+            </label>
+            &nbsp;
+            {/loop}
+        </div>
+        
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">选房未交款超时</label>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="number" min="2" max="300" class="form-control" name="timeout" value="{$set['timeout']}" >
+                <span class="input-group-addon">分钟</span>
+            </div>
+
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    require(['jquery'], function($){
+        $('.check_all').click(function(){
+            $("#form-set input[name^='m_ids']").prop('checked', $(this).prop("checked"));
+        });
+    });
+</script>

@@ -1,0 +1,64 @@
+	  ALTER TABLE `ims_chips` ADD COLUMN `lucky` tinyint(4) DEFAULT 0;
+	  ALTER TABLE `ims_chips` ADD COLUMN `remark` varchar(200) DEFAULT NULL COMMENT '备注';
+	  ALTER TABLE `kaipan`.`ims_mystation` CHANGE COLUMN `modules` `modules` text DEFAULT NULL;
+	  --12/12，增加表处理
+	   ALTER TABLE `ims_chips` ADD COLUMN `QSDate` int(10) DEFAULT 0 AFTER `ordermoney`;
+	   ALTER TABLE `ims_chips` ADD COLUMN `ProtocolNO` varchar(30) AFTER `ordermoney`;
+
+      ALTER TABLE `ims_p_invoicedetail` ADD COLUMN `ErpSync` tinyint DEFAULT 0;	   
+	   ALTER TABLE `ims_p_room` ADD COLUMN `SelectTime` int(10) DEFAULT 0;
+	   ALTER TABLE `ims_p_room` ADD COLUMN `GhTnArea`  float NULL AFTER `SelectTime`;
+       ALTER TABLE `ims_p_room`  ADD COLUMN `GhBldArea`  float NULL AFTER `GhTnArea`;
+      ALTER TABLE `ims_chips` ADD COLUMN `signdate` int(10) DEFAULT 0;
+       ALTER TABLE `ims_chips` ADD COLUMN `salesmanGUID` char(36) DEFAULT NULL COMMENT '业务员guid';
+
+      ALTER TABLE `ims_chips` CHANGE COLUMN `status` `status` mediumint(8) UNSIGNED DEFAULT 0;
+
+	  ALTER TABLE `ims_chips` DROP COLUMN `orderstatus`;
+	  
+ALTER TABLE `ims_chips` CHANGE COLUMN `PotocolNO` `ProtocolNO` varchar(30) DEFAULT NULL;
+      
+      
+ALTER TABLE `ims_p_room` CHANGE COLUMN `RoomTotal` `RoomTotal` decimal UNSIGNED DEFAULT 0;
+ALTER TABLE `ims_p_room` CHANGE COLUMN `Total` `Total` decimal UNSIGNED DEFAULT 0;
+
+ALTER TABLE `ims_s_fee` ADD COLUMN `ProjGUID` char(36) AFTER `FeeGUID`;
+ALTER TABLE `ims_s_fee` CHANGE COLUMN `Amount` `Amount` decimal UNSIGNED DEFAULT 0;
+ALTER TABLE `ims_s_fee` CHANGE COLUMN `RmbAmount` `RmbAmount` decimal UNSIGNED DEFAULT 0;
+ALTER TABLE `ims_s_fee` CHANGE COLUMN `RmbYe` `RmbYe` decimal UNSIGNED DEFAULT 0;
+ALTER TABLE `ims_s_fee` CHANGE COLUMN `Ye` `Ye` decimal UNSIGNED DEFAULT 0;
+ALTER TABLE `ims_s_fee` ADD COLUMN `Rate` float DEFAULT 0 ;
+ALTER TABLE `ims_s_fee` MODIFY COLUMN `lastDate`  char(30) NULL DEFAULT NULL AFTER `Flag`;
+
+
+update ims_myuser set IsDisabeld=0;
+
+ALTER TABLE `ims_printtask` ADD COLUMN `copy` tinyint UNSIGNED DEFAULT 1 ;
+
+ CREATE TABLE `ims_core_performance` (
+ 	`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+ 	`type` tinyint(1) NOT NULL,
+ 	`runtime` varchar(10) NOT NULL,
+ 	`runurl` varchar(512) NOT NULL,
+ 	`runsql` varchar(512) NOT NULL,
+ 	`createtime` int(10) NOT NULL,
+ 	PRIMARY KEY (`id`)
+ ) ENGINE=`MyISAM` DEFAULT CHARSET=utf8 ;
+      
+ALTER TABLE  `ims_s_fee` CHANGE COLUMN `Amount` `Amount` decimal(12,2) UNSIGNED DEFAULT 0, 
+    CHANGE COLUMN `RmbAmount` `RmbAmount` decimal(12,2) UNSIGNED DEFAULT 0;      
+      
+      --todo:
+      1、同步，加日志？
+      2、打印
+
+      INSERT INTO s_Trade (BDCustomer,HadHouseTS,RoomGUID,TradeGUID,signguid) VALUES ('1','0','41E4D5CD-F271-4F56-8010-30513D4A1B66','66229ACE-CC3F-2BB8-BD60-2B838EF3754D','1BC4940F-81A1-40F7-A90A-73F5C34E02EA')
+      INSERT INTO s_Trade2Cst (Trade2CstGUID,TradeGUID,CstGUID,signguid,CstNum,PropertyRate) VALUES ('661F1CB2-2DF6-A0C3-E430-74215AAB02C3','66229ACE-CC3F-2BB8-BD60-2B838EF3754D','39F53393-C112-FE00-63DC-491D198E4F47','1BC4940F-81A1-40F7-A90A-73F5C34E02EA','1','100')
+      INSERT INTO s_Order (OrderGUID,TradeGUID,ProjGuid,Ywy,CreatedBy,BUGUID,RoomGUID,DiscntValue,BldCjPrice,BldArea,Price,TnArea,TnPrice,Total,CjTotal,RmbCjTotal,DiscntRemark,PayFormName,RoomTotal,TnCjPrice,Bz,OrderType,Status,AreaStatus,ExRate,PotocolNO,salesmanGUID,QSDate,EndDate,CreatedOn,ModiDate,YwblDate,DLGS,CreatedByGUID,IsCreatorUse,SpState,NewZsAmount,Xzdlgs,IsJjx,IsZx,TjrRoomBldArea,TjrDiscnt,XyTotal,CjSum,CalMode,Earnest,UserGUIDList,fjcsdj,AjTotal,signguid) VALUES ('01C5907E-3480-557D-46FA-EF02FC9F845B','66229ACE-CC3F-2BB8-BD60-2B838EF3754D','1BC4940F-81A1-40F7-A90A-73F5C34E02EA','莫伟聪','苏晓轩','561780AC-404B-40F3-B437-02DA086B5565','41E4D5CD-F271-4F56-8010-30513D4A1B66','91.3','6134','116.1','6719','94.17','8283','780032','712208','712208','以标准总价为基础计算：商业按揭100% × 准时付款优惠99% × 团购优惠98% × 权证登记99% × 优惠登记98% × VIP专场优惠97%','商业按揭','712208','7563','人民币','认购','激活','预售','1','FSRL1501010207','0A1E6CFE-459C-4CA3-9D98-A06FFE83EEFF','2015-01-01','2015-01-11','2015-01-01','2015-01-01','2015-01-01','合富代理','0','1','0','0','','0','0','0','100','712208','0','建筑面积','0','0A1E6CFE-459C-4CA3-9D98-A06FFE83EEFF','705075','490000','1BC4940F-81A1-40F7-A90A-73F5C34E02EA')
+
+update ims_s_fee set SyncTime=0;
+update ims_chips set SyncTime=0;
+
+-----------2015/01/02---------
+ALTER TABLE `ims_chips` CHANGE COLUMN `StationCode` `StationCode` varchar(200) DEFAULT NULL;
+ALTER TABLE `ims_chips` ADD COLUMN `ChipsNo` varchar(30) AFTER `salesmanGUID`;

@@ -1,0 +1,36 @@
+<div class="clearfix user-browser">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">认筹单</label>
+            <div class="col-xs-10 col-md-10 col-lg-10">
+                <div class="input-group">
+                    <input id="keyword" type="text" class="form-control" value="{$_GPC['keyword']}" />
+                    <div class="input-group-btn">
+                        <button class="btn btn-default pull-right" onclick="{$callback}.pIndex=1;{$callback}.query();"><i class="fa fa-search"></i> 搜索</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table tb">
+            <thead>
+            <tr>
+                <th style="width: 70px;" class="text-center">选择</th>
+                <th style="width: 130px;">认筹单</th>
+                <th style="width: 80px;">用户名</th>
+                <th>证件号码</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td class="text-center"><input type="checkbox" id="chk_user_{$row['id']}" name="uids" value="{$item['qrcode']}" {if in_array($item['qrcode'], $uidArr)} checked="checked"{/if}></td>
+                <td><label for="chk_user_{$row['id']}" style="font-weight:normal;">{$item['username']}</label></td>
+                <td><label class="label label-info">{$item['cname']}</label></td>
+                <td >{$item['cardid']}</td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        {$pager}
+    </div>
+</div>

@@ -1,0 +1,249 @@
+{template 'common/header-project'}
+<style>
+    .navgroup{border-bottom:0;min-height: 80px;max-height: 160px;overflow-y:scroll;}
+	.navgroup li{ margin:0 5px 0 0;/*background-color:#eff;*/ border-radius:10px;}
+    .navactive{overflow:hidden; background-color:#eee !important; border-radius:10px;}
+	.navgroup{ margin:5px 0 5px 0;}
+	.navright{float:right; width:60px;}
+	.navright li{width:70px; list-style-type:none;text-decoration:none;}
+</style>
+<div class="main">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="panel-title">
+            <span >签到分配</span>
+            <div class="pull-right">
+                <a href="#" id="btn-AddGroup">
+                    <i class="fa fa-plus"></i>增加组
+                </a>
+            </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="navgroup" >
+
+                {loop $groups $g}
+                <div {if $g['dispnum']==$sid}class="navactive"{/if}  style="min-width:100px; width: auto; border-radius:10px; background-color:#eff; float:left; margin:5px 5px 5px 0; height:50px; padding-top:4px;"> 
+                <a href="{php echo $this->createWebUrl($do,array('sid'=>$g['dispnum']));}" title="查看组分配信息">
+                    <span style="font-size:30px; margin:0 0 0 10px;">{$g['dispnum']}</span>
+                    <div class="navright">
+                        <li>总数 <span class="badge">{$g['maxnum']}</span></li>
+                        <li>签到 <span class="badge">{$g['signednum']}</span></li>
+                    </div>
+                 </a>
+                </div>
+                {/loop}
+            </div>
+        </div>
+        <div class="row brand-info" style="height:32px;color:#ffffff;background-color:#5bc0de; line-height:20px; padding:4px;">
+            当前组分配信息 组号<span class="label label-warning">{$sel_group['dispnum']}</span>
+            <div class="pull-right">
+                {if !empty($sel_group)}
+                {if empty($sel_group['maxnum'])}
+                <a href="#" id="btn-DelGroup">
+                    <i class="fa fa-minus"></i>删除组
+                </a>
+                {/if}&nbsp;&nbsp;
+                <a href="#" id ="btn-Addrc">
+                    <i class="fa fa-plus"></i>增加认筹单
+                </a>
+                {/if}
+            </div>
+        </div>
+
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th>组号</th>
+                <th>认筹单</th>                
+                <th>姓名</th>
+                <th>证件号码</th>
+                <th>签到</th>
+                <th>预设</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $signs $row}
+            <tr>
+                <td>{$row['gid']}</td>
+                <td>{$row['qrcode']}</td>
+                <td>{$row['cname']}</td>
+                <td>{$row['cardid']}</td>
+                <td>{php echo $row['signed']?date('Y-m-d H:i:s',$row['signtime']):'未签到';}</td>
+                <td>{php echo $row['preset']?'是':'否';}</td>
+                <td>{if empty($row['signed'])&&(!empty($row['preset']))}<a href="{php echo $this->createWebUrl($do, array('op'=>'delete','id' => $row['id'],'gid'=>$row['gid']))}">删除</a>{/if}</td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"  data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加组
+                </h4>
+            </div>
+            <div class="modal-body">
+                <br/>
+                <div class="row">
+                    <label >请输入组序号</label>
+                    <input type="number" min="1" id="group-num"  placeholder="输入组的数字">
+                </div><!-- /input-group -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" name="btn-AddGroup">
+                    提交
+                </button>
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="myModal-minus" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"  data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel2" >
+                    删除组
+                </h4>
+            </div>
+            <div class="modal-body">
+                <br/>
+                <div class="row">
+                    <label >确定删除组{$sid}？</label>
+                </div><!-- /input-group -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" name="btn-DelGroup">
+                    是
+                </button>
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">否
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="myModalch" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel1" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"  data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel1">
+                    添加认筹单
+                </h4>
+            </div>
+            <div class="modal-body form-horizontal" style="min-height: 120px" >
+                <br>
+                <div class="form-group" >
+                    <label class="col-md-3 control-label">认筹单号：</label>
+                    <div class="col-md-8">
+                        <input type="text" id="qrcode" class="form-control " placeholder="">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" name="btn-Addrc">确认</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="modal fade" id="dialog_selChips" tabindex="-1" role="dialog"
+     aria-labelledby="dscLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"  data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="dscLabel">
+                    选择认筹单
+                </h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">确认</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<script>
+    require(['jquery'], function($) {
+
+        $('#btn-AddGroup').click(function () { 
+            var dialog=$('#myModal');
+            dialog.modal('show');
+            dialog.find('.btn.btn-primary').click(function(){
+                var num = dialog.find('#group-num').val();
+                $.post("{php echo $this->createWebUrl($do);}"+"&t="+Math.random(),
+                        {'op': 'addgroup', 'num': num},
+                        function (dat) {
+                            if (dat == 'success'){
+                            dialog.modal('hide');location.reload(true);
+                        }else{alert('操作失败, 请稍后重试, 服务器返回信息为: ' + dat);}
+                        });
+            });
+        });
+ 
+        $('#btn-DelGroup').click(function () { 
+            var dialog=$('#myModal-minus');
+            dialog.modal('show');
+            dialog.find('.btn.btn-primary').click(function(){
+
+                $.post("{php echo $this->createWebUrl($do);}"+"&t="+Math.random(),
+                        {'op': 'delgroup','sid':'{$sid}' },
+                        function (dat) {
+                            if (dat == 'success'){
+                                dialog.modal('hide');
+                                location.reload(true);
+                            }else{alert('操作失败, 请稍后重试, 服务器返回信息为: ' + dat);}
+                        });
+            });
+        });
+ 
+        $('#btn-Addrc').click(function () { 
+            var dialog=$('#myModalch');
+            dialog.modal('show');
+            dialog.find('.btn.btn-primary').click(function(){
+                var qrcode = dialog.find('#qrcode').val();
+                $.post("{php echo $this->createWebUrl($do);}"+"&t="+Math.random(),
+                        {'op': 'addrc', 'qrcode': qrcode , 'sel_code':'{$sel_group['dispnum']}'},
+                        function (dat) {if (dat == 'success') {
+                            dialog.modal('hide');location.reload(true);
+                        }else {
+                            alert(dat);}
+                        });
+            });
+        });
+
+        
+        $("#myModal").on("hidden.bs.modal", function() {
+            location.reload(true);
+        });
+    });
+</script>
+
+{template 'common/footer'}

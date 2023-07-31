@@ -1,0 +1,99 @@
+{template 'common/header-project'}
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li class="active" ><a href="{php echo $this->createWebUrl('template');}">打印模板列表</a></li>
+        <li ><a href="{php echo $this->createWebUrl('template',array('op'=>'post'));}">增加打印模板</a></li>
+    </ul>
+    <div class="panel panel-info">
+        <div class="panel-heading">打印模板列表</div>
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th>模板名称</th>
+                <th>打印类型</th>
+                <th>适用项目</th>
+                <th>标签数量</th>
+                <th>创建日期</th>                
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="re-items">
+            {loop $list $item}
+            <tr>
+                <td >{$item['title']}</td>
+                <td>{$printtype[$item['printtype']]}</td>
+                <td>{php echo empty($item['project'])?'所有':'当前'}</td>
+                <td> <a class="tags" data-id="{$item['id']}" href="#">{$item['tagsnum']}</a></td>
+                <td>{php echo date('Y-m-d H:i:s',$item['createtime']);}</td>
+                <td>{php echo empty($item['status'])?"停用":"启用";}</td>
+                <td>
+                    <a data-id="{$item['id']}" href="#" title="删除模板" class="btn btn-default btn-sm del"><i class="fa fa-times"></i></a>
+                    <a data-id="{$item['id']}" href="{php echo $this->createWebUrl('template', array('op'=>'set','id' => $item['id']))}" class="btn btn-default btn-sm" title="配置标签"><i class="fa fa-tags"></i></a>
+                    <a  href="{php echo $this->createWebUrl('template', array('op'=>'down','id' => $item['id']))}" title="下载模板" class="btn btn-default btn-sm"><i class="fa fa-download"></i></a>
+                </td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        <div class="panel-footer" style="padding-bottom: 1px;">
+            {$pager}
+        </div>
+    </div>
+</div>
+<div id="footer-set" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-set').submit();">保存</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+     aria-labelledby="dscLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"  data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="dscLabel">
+                    删除打印模板
+                </h4>
+            </div>
+            <div class="modal-body">
+                确定删除此打印模板？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">确认</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<script> 
+require(['bootstrap', 'util'],function($, u){
+    $('.tags').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo $this->createWebUrl('template',array('op'=>'tags'));}"+'&id='+id  , function(data){
+            var obj = u.dialog('模板标签配置', data, $('#footer-set').html());
+            obj.modal('show');
+        });
+    });
+
+});
+require(['jquery'], function($) {
+    $('.del').click(function () {
+         var id=$(this).attr('data-id');
+        var dialog=$('#myModal');
+        dialog.modal('show');
+        dialog.find('.btn.btn-primary').click(function(){
+            //var num = dialog.find('#group-num').val();
+            $.post("{php echo $this->createWebUrl('template');}"+"&t="+Math.random(),
+                    {'op': 'delete', 'id': id},
+                    function (dat) {
+                        if (dat == 'success'){
+                            dialog.modal('hide');location.reload(true);
+                        }else{alert('操作失败, 请稍后重试, 服务器返回信息为: ' + dat);}
+                    });
+        });
+    });
+});
+</script>         
+{template 'common/footer'}

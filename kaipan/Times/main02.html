@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>选房组</title>
+    <link href="bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script src="js/knockout-2.3.0.js"></script>
+    <script src="js/common.js"></script>
+    <script type="text/javascript">
+        var url = localStorage.getItem("url");
+        var token = localStorage.getItem("token");
+        var projectguid;
+        var projectname = localStorage.getItem("projectname");
+        var key;//二维码
+        $(function () {
+            $("#currentProj").html("当前项目：" + projectname);         
+        })
+
+        var h = 1;
+        var key;
+        //  二维码
+        function takecode() {
+            JSBridge.takecode(function (codeInfo, isSuccess) {
+                if (isSuccess == true) {
+                    var obj = eval('(' + codeInfo + ')');
+
+                    if (h == 1) {
+
+                        search(obj.code);
+                    } else {
+                        h = 1;
+                        window.location.href = "sign02.html?key=" + obj.code;
+                    }
+                }
+                else {
+                    alert("二维码扫描不成功");
+                }
+            });
+        }
+        function qiandao() {
+            h = 0;
+            takecode();
+
+        }
+
+
+
+        //查询单子状态
+        function search(key) {
+            //'0A9CCF65-3564-F34B-0CAD-D4EA783D1A1A'
+            var chipsdata = { info: { token: token }, func: 'chipsinfo', params: { qrcode: 'D8B74C0E-9176-4D50-3BF4-856488C5268A' } };
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: chipsdata,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+                        alert(json.data.step);
+                    }
+                    else {
+                        alert("无效认筹单！");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("无法获取数据，请重试");
+                    //alert(XMLHttpRequest.msg);
+                },
+                timeout: 5000,
+            })
+        }
+
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-default  navbar-fixed-top" role="navigation" style="height: 71px; font-size: 14px; padding-top: 10px">
+        <div class="navbar-header" style="height: 70px">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">时代地产</a>
+        </div>
+        <div class="collapse navbar-collapse" id="example-navbar-collapse" style="height: 70px">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="main02.html">首页</a></li>
+                     <li><a href="room_xuanfang.html">选房</a></li>
+               <!-- <li>
+                    <button type="button" class="btn btn-default" style="padding-top: 15px; padding-bottom: 15px; background-color: transparent; border: hidden" onclick="takecode()">查询</button></li>-->
+
+                <li><a href="premain.html">项目</a></li>
+
+                <li><a href="start.html">退出</a></li>
+
+                
+                <li><a id="currentProj"></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="content">
+
+
+        <div class="container" id="center" style="margin-top: 150px;">
+            <!-- <div class="center" id="center">-->
+            <div class="row" style="text-align: center">
+
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <a href="room_xuanfang.html">
+                        <img src="images/02.jpg" style="border-radius: 25px"
+                            alt="通用的占位符缩略图">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</body>
+</html>

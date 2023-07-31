@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./web/resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./web/resource/css/font-awesome.min.css" rel="stylesheet">
+    <link href="./web/resource/css/common.css" rel="stylesheet">
+    <script src="./web/resource/js/lib/jquery-1.11.1.min.js"></script>
+    <script src="./web/resource/js/lib/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div>
+        <div class="input-group">
+             <span class="input-group-addon">
+                 <input type="radio" name="local" id="p_radio_1" value="1" checked/> 本地
+             </span>
+             <input type="text" class="form-control" id="host" value="work.cc/newkp">
+             <span class="input-group-addon">
+                 <input type="radio" name="local" id="p_radio_2" value="0" />云-182.254.197.221
+             </span>
+            <span class="input-group-addon">
+                <input type="radio" name="local" id="p_radio_3" value="2" />内部10.1.19.17
+             </span>
+        </div>
+    </div>
+    <div >
+        <label for="func_1" class="radio-inline"><input type="radio" name="func" id="func_1" value="login" checked/> login</label>
+        <label for="func_2" class="radio-inline"><input type="radio" name="func" id="func_2" value="sign" /> sign</label>
+        <label for="func_21" class="radio-inline"><input type="radio" name="func" id="func_21" value="lucky" /> lucky</label>
+        <label for="func_7" class="radio-inline"><input type="radio" name="func" id="func_7" value="chipsinfo" /> chipsinfo</label>
+        <label for="func_8" class="radio-inline"><input type="radio" name="func" id="func_8" value="projlist" /> projlist</label>
+        <label for="func_6" class="radio-inline"><input type="radio" name="func" id="func_6" value="buildlist" /> buildlist</label>
+        <label for="func_4" class="radio-inline"><input type="radio" name="func" id="func_4" value="roominfo" /> roominfo</label>
+        <label for="func_4" class="radio-inline"><input type="radio" name="func" id="func_4" value="roomstatus" /> roomstatus</label>
+
+        <label for="func_3" class="radio-inline"><input type="radio" name="func" id="func_3" value="selectroom" /> selectroom</label>
+        <label for="func_5" class="radio-inline"><input type="radio" name="func" id="func_5" value="unselectroom" /> unselectroom</label>
+        <label for="func_14" class="radio-inline"><input type="radio" name="func" id="func_14" value="report" /> report</label>
+        <label for="func_13" class="radio-inline"><input type="radio" name="func" id="func_13" value="nei_unselect_room" /> nei_unselect_room</label>
+        <label for="func_15" class="radio-inline"><input type="radio" name="func" id="func_15" value="turn_room" /> turn_room</label>
+        <label for="func_16" class="radio-inline"><input type="radio" name="func" id="func_16" value="changestatus" /> changestatus</label>
+
+        
+    </div>
+    <div class=" form-horizontal" >
+        <div class="form-group">
+            <div class="col-md-2 control-label">
+                <label>Qrcode</label> 
+            </div>
+            <div class="col-md-4">
+                <input class="form-control"  type="text" id="Qrcode" value="F1D2FE0A-1AE9-68A8-3E60-3704F6310BEE" />
+            </div>
+            <div class="col-md-2 control-label">
+                <label>ProjGUID</label>
+            </div>
+            <div class="col-md-4">
+                 <input type="text" class="form-control " id="ProjGUID" value='1BC4940F-81A1-40F7-A90A-73F5C34E02EA'/>
+            </div>    
+        </div>
+        <div class="form-group">
+            <div class="col-md-2 control-label">
+                <label>BldGUID</label>
+            </div>
+            <div class="col-md-4">
+            <input  class="form-control" type="text" id="BldGUID" value="962233A0-D96F-4554-8E71-C1977231DEC6" />
+                </div>
+            <div class="col-md-2 control-label">
+                <label>RoomGUID</label>
+            </div>
+            <div class="col-md-4">
+            <input type="text" class="form-control" id="RoomGUID" value="94640405-E6AA-4FE5-86E7-18F6564DD880"/>
+            </div>
+        </div>
+        <button class="btn btn-danger" onclick="call();">调用</button>
+    
+    </div>
+    <div class="row">
+        <textarea   id="result" rows="16"  class="form-control" >
+
+        </textarea>
+    </div>
+</div>
+<script>
+    var uid='8f70e5d79fe99a1a224c03093bbd0c1a';
+    var i=1;
+    function call(){
+        $('#result').val('');
+        var qrcode=$('#Qrcode').val();
+        var ProjGUID=$('#ProjGUID').val();
+        var BldGUID=$('#BldGUID').val();
+        var RoomGUID=$('#RoomGUID').val();
+        var Status='待售';//$('#Status').val();
+        var local= $('input:radio[name="local"]:checked').val();
+        var host=local==1?$("#host").val():(local==2?'10.1.19.17':'182.254.197.221');
+        var url= 'http://'+host+'/api.php';
+        var data = {};
+        var func= $('input:radio[name="func"]:checked').val();
+        data.func=func;
+        switch(func){
+            case 'login':
+                data.params={ 'usercode':'kaifa1','password': '111' };
+                break;
+            case 'sign':
+                data.info={'token':uid};
+                data.params={'qrcode':qrcode,'projguid':ProjGUID};
+                break;
+                
+            case 'lucky':
+                data.info={'token':uid};
+                data.params={'qrcode':qrcode,'projguid':ProjGUID};
+                break;
+            case 'chipsinfo':
+                data.info={'token':uid};
+                data.params={'qrcode':qrcode,'projguid':ProjGUID};
+                break;
+            case 'projlist':
+                data.info={'token':uid};
+                break;
+            case 'buildlist':
+                data.info={'token':uid};
+                data.params={'projguid':ProjGUID};
+                break;
+            case 'roominfo':
+                data.info={'token':uid};
+                data.params={'projguid':ProjGUID,'BldGUID':BldGUID};
+                break;
+            case 'roomstatus':
+                data.info={'token':uid};
+                data.params={'projguid':ProjGUID,'BldGUID':BldGUID};
+                break;
+                
+            case 'selectroom':
+                data.info={'token':uid};
+                data.params={'qrcode':qrcode,
+                    'ProjGUID':ProjGUID,
+                    'BldGUID':BldGUID,
+                    'RoomGUID':RoomGUID};
+                break;
+            case 'unselectroom':
+                data.info={'token':uid};
+                data.params={'qrcode':qrcode,
+                    'ProjGUID':ProjGUID,
+                    'BldGUID':BldGUID,
+                    'RoomGUID':RoomGUID};
+                break;
+            case 'turn_room':
+                data.info={'token':uid};
+                data.params={'qrcode':qrcode,
+                    'ProjGUID':ProjGUID,
+                    'BldGUID':BldGUID,
+                    'RoomGUID':RoomGUID
+                    
+                };
+                break;
+            case 'nei_unselect_room':
+                data.info={'token':uid};
+                data.params={'qrcode':qrcode,
+                    'ProjGUID':ProjGUID,
+                    'BldGUID':BldGUID,
+                    'RoomGUID':RoomGUID};
+                break;
+            case 'changestatus':
+                data.info={'token':uid};
+                data.params={'qrcode':qrcode,
+                    'ProjGUID':ProjGUID,
+                    'BldGUID':BldGUID,
+                    'RoomGUID':RoomGUID,
+                    'Status':Status
+                };
+                break;
+            case 'report':
+                data.info={'token':uid};
+                data.params={
+                    'ProjGUID':ProjGUID};
+                break;
+        }
+        $.ajax({
+            url: url,
+            dataType: 'jsonp',
+            data: data,
+            jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+            success: function (json) {
+                $('#result').val( JSON.stringify(json, null, '\t'));
+                if(func=='login'&&json.result){
+                    uid=json.data.user.Token;
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.msg);
+
+            },
+            timeout: 90000
+        });
+
+
+    }
+</script>
+</body>
+</html>

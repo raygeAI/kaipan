@@ -1,0 +1,14 @@
+<form method="post" action="{$url}" id="form-set" class="form-horizontal" role="form" style="min-height: 120px">
+    <input type="hidden" value="{$_W['token']}" name="token"/>
+    <br/>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" >可用银行</label>
+        <div class="col-md-5">
+            <select name="bank" class="form-control col-sm-12">
+                {loop $banks $bank}
+                <option value="{$bank['id']}" {if $bank['id']==$bk['id']}selected="selected"{/if}>{$bank['name']}</option>
+                {/loop}
+            </select>
+        </div>
+    </div>
+</form>

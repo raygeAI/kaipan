@@ -1,0 +1,45 @@
+{template 'common/header-base'}
+<div class="login">
+	<div class="clearfix" style="margin-bottom:5em;margin-top:5em;">
+		<div class="panel panel-default container" style="width:50%;">
+			<div class="panel-body">
+				<form action="" method="post" role="form">
+                    <div class="logo" style="height: 50px;"><a href="#"></a></div>
+					<div class="form-group input-group">
+						<div class="input-group-addon"><i class="fa fa-user"></i></div>
+						<input name="username" type="text" class="form-control input-lg" placeholder="请输入用户名登录">
+					</div>
+					<div class="form-group input-group">
+						<div class="input-group-addon"><i class="fa fa-unlock-alt"></i></div>
+						<input name="password" type="password" class="form-control input-lg" placeholder="请输入登录密码">
+					</div>
+					<div class="form-group">
+                        <label class="checkbox-inline input-lg"> 	<input type="checkbox" value="true" name="admin"> 管理员  </label>
+
+                        <div class="pull-right">
+							<input type="submit" name="submit" value="登录" class="btn btn-primary btn-lg" />
+							<input name="token" value="{$_W['token']}" type="hidden" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="center-block footer" role="footer">
+		<div class="text-center">
+			{if empty($_W['setting']['copyright']['footerright'])}<a href="http://www.timesgroup.cn">关于系统</a>&nbsp;&nbsp;{else}{$_W['setting']['copyright']['footerright']}{/if} &nbsp; &nbsp; {if !empty($_W['setting']['copyright']['statcode'])}{$_W['setting']['copyright']['statcode']}{/if}
+		</div>
+		<div class="text-center">
+			{if empty($_W['setting']['copyright']['footerleft'])}Powered by <a href="http://www.timesgroup.cn"><b>开盘管理</b></a> v{IMS_VERSION} &copy; 2014 <a href="http://www.timesgroup.cn">www.timesgroup.cn</a>{else}{$_W['setting']['copyright']['footerleft']}{/if}
+		</div>
+	</div>
+</div>
+<script>
+
+require(['jquery'],function($){
+	var h = document.documentElement.clientHeight;
+	$(".login").css('min-height',h);
+});
+</script>
+</body>
+</html>

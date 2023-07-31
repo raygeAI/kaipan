@@ -1,0 +1,13 @@
+<form action="{$url}" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="form-update">
+    <h4>{$title}</h4>
+    <ul class="list-group">
+        
+        <li class="list-group-item"><label> <input type="checkbox" value="user" name="options[]"/>下载用户信息</label></li>
+        <li class="list-group-item"><label> <input type="checkbox" value="room" name="options[]" />下载房间信息</label></li>
+        <li class="list-group-item"><label> <input type="checkbox" value="discount" name="options[]" />下载折扣信息</label></li>
+        <li class="list-group-item"><label> <input type="checkbox" value="voucher" name="options[]" />上传诚意金数据</label></li>
+        <li class="list-group-item"><label> <input type="checkbox" value="order" name="options[]" />上传订金、订单数据</label></li>
+    </ul>
+    <input name="token" type="hidden" value="{$_W['token']}" />
+</form>
+     

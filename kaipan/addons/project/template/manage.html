@@ -1,0 +1,299 @@
+{template 'common/header-project'}
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{php echo $this->createWebUrl('manage');}">开盘管理</a></li>
+    </ul>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <span>楼盘信息</span>
+            <div class="pull-right btn-group">
+                <a href="#" id="btn_proj" class="btn">
+                    <i class="fa fa-wrench"></i>设置
+                </a>
+                {if $ERP_ENABLE}
+                <a href="#" id="btn_erp" class="btn">
+                    <i class="fa fa-plus"></i>更新ERP
+                </a>
+                {/if}
+            </div>
+        </div>
+        <div class="panel-body form-horizontal"  >
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">楼盘名称</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="text"  id="projname"  value="{$project['projname']}">
+                    </div>
+                    <label class="col-sm-2 control-label">楼盘GUID</label>
+                    <div class="col-sm-4">
+                        <input class="form-control" id="projguid"  value="{$project['projguid']}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" value="{$status[$project['status']]}" >
+                    </div>
+                    <label class="col-sm-2 control-label">开盘服务器</label>
+                    <div class="col-sm-4">
+                        <input class="form-control"  value="{$sync['client']}">
+                    </div>
+                </div>
+            
+    
+        </div>
+        <div class="panel-heading">
+            <div class="panel-title">
+                <span>签到叫号设置</span>
+                <div class="pull-right">
+                    
+                    <a href="#" id="btn_sign" class="btn set">
+                        <i class="fa fa-wrench"></i>设置
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">每组人数</label>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <input class="form-control"  value="{$sign['num']}">
+                        <span class="input-group-addon">人/组</span>
+                    </div>
+                </div>
+                <label class="col-sm-2 control-label">叫号最多组数</label>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <input class="form-control"  value="{$sign['max']}">
+                        <span class="input-group-addon">组</span>
+                    </div>                   
+                </div>
+
+            </div>
+        </div>
+        <div class="panel-heading">
+            <div class="panel-title">
+                <span>打印票据</span>
+                <div class="pull-right">
+                    <a  id="btn_invoice" class="btn set">
+                        <i class="fa fa-wrench"></i>设置
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body form-horizontal">
+            <div class="form-group">
+                <label class="col-md-2 control-label">诚意金</label>
+                <div class = "col-md-7">
+                    <div class = "input-group">
+                        <span class="input-group-addon">票据批次</span>
+                        <input class="form-control"  value="{$finance['prepay']['BatchNo']}">
+                        <span class="input-group-addon">编号前缀</span>
+                        <input class="form-control"  value="{$finance['prepay']['Prefix']}">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-md-2 control-label">定金</label>
+                <div class = "col-md-7">
+                    <div class = "input-group">
+                        <span class="input-group-addon">票据批次</span>
+                        <input class="form-control" value="{$finance['order']['BatchNo']}">
+                        <span class="input-group-addon">编号前缀</span>
+                        <input class="form-control" value="{$finance['order']['Prefix']}">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">认购书</label>
+                <div class = "col-md-7">
+                    <div class="input-group">
+                        <span class="input-group-addon">编号前缀</span>
+                        <input class="form-control"  value="{$finance['Prefix']}">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">认筹书</label>
+                <div class = "col-md-7">
+                    <div class="input-group">
+                        <span class="input-group-addon">编号前缀</span>
+                        <input class="form-control"  value="{$finance['ChipsPre']}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-heading">
+            <div class="panel-title">
+                <span>付款方式及折扣设置</span>
+                <div class="pull-right">
+                    <a  id="btn_discount" class="btn set">
+                        <i class="fa fa-wrench"></i>设置
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">支付方式</label>
+                <div class="col-sm-3">
+                    <input class="form-control"  value="{$pay['title']}">
+                </div>
+                <label class="col-sm-2 control-label">折扣</label>
+                <div class="col-sm-3">
+                    <input class="form-control"  value="{$pay['discount']}">
+                </div>
+                
+        
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">说明</label>
+                <div class="col-sm-10">
+                    <input class="form-control"  value="{$pay['calc']['remark']}">
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    供款明细信息
+                </div>
+
+                    <table class="table table-hover">
+                        <thead class="navbar-inner">
+                        <tr>
+                            <th style="width: 20px;">序号</th>
+                            <th style="width:120px;">付款期限</th>
+                            <th style="width:140px;">款项类型</th>
+                            <th style="width:140px;">款项名称</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {loop $pay['details'] $item}
+                        <tr>
+                            <td>{$item['Sequence']}</td>
+                            <td>{if $item['ActiMonth']>0}{$item['ActiMonth']}月{/if}
+                                {if $item['ActiDays']>0}{$item['ActiDays']}天{/if}</td>
+                            <td>{$item['FeeSort']}</td>
+                            <td>{$item['ItemName']}</td>
+                        </tr>
+                        {/loop}
+                        </tbody>
+                    </table>
+
+            </div>
+        </div>
+        <div class="panel-heading">
+            <div class="panel-title">
+                <span>售房相关信息</span>
+                <div class="pull-right">
+                    <a  id="btn_build" class="btn set">
+                        <i class="fa fa-wrench"></i>设置
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">可用楼栋</label>
+                <div class="col-sm-8">
+                    {loop $builds $key $build}
+                    <input type="checkbox"  name="m_ids[]" value="{$build['BldGUID']}" {if $build['Status']==1}checked{/if} >{$build['BldName']}&nbsp;&nbsp;
+                    {/loop}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">房间数量</label>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="{$sale['roomnum']}" >
+                        <span class="input-group-addon">套</span>
+                    </div>
+                </div>
+                <label class="col-sm-2 control-label">选房未交款超时</label>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="{$sale['timeout']}" >
+                        <span class="input-group-addon">分钟</span>
+                    </div>
+          
+                </div>
+            </div>
+
+        </div>
+        <div class="panel-heading">
+            <div class="panel-title">
+                <span>可用银行</span>
+                <div class="pull-right">
+                    <a  id="btn_bank" class="btn set">
+                        <i class="fa fa-wrench"></i>设置
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">可用银行</label>
+                <div class="col-sm-3">
+                    <input class="form-control"  value="{$bank['name']}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer-group" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-set').submit();">保存</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>       
+<script> 	
+require(['bootstrap', 'util'],function($, u){
+    var enable={php echo $enable?'true':'false'};
+    if(!enable) {
+        $('.set').hide();
+    }
+    $('#btn_discount').click(function(){
+        if(!enable) return false;
+        $.get("{php echo  $this->createWebUrl('set',array('op'=>'discount'));}"  , function(data){	
+            var obj = u.dialog('付款方式及折扣设置', data, $('#footer-group').html());	
+            obj.modal('show');
+        });
+
+    });
+    $('#btn_invoice').click(function(){
+        if(!enable) return false;
+        $.get("{php echo  $this->createWebUrl('set',array('op'=>'invoice'));}"  , function(data){
+            var obj = u.dialog('打印票据设置', data, $('#footer-group').html(),{'showModal':'modal-lg'});
+            obj.modal('show');
+        });
+
+    });
+    $('#btn_sign').click(function(){
+        if(!enable) return false;
+        $.get("{php echo  $this->createWebUrl('set',array('op'=>'sign'));}"  , function(data){
+            var obj = u.dialog('签到分组设置', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+
+    });
+    $('#btn_proj').click(function(){
+        $.get("{php echo  $this->createWebUrl('set',array('op'=>'project'));}"  , function(data){
+            var obj = u.dialog('项目设置', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+
+    });
+    $('#btn_build').click(function(){
+        $.get("{php echo $this->createWebUrl('set', array('op' => 'build'));}" , function(data){
+            var obj = u.dialog('售房相关信息设置', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+    });
+    $('#btn_bank').click(function(){
+        $.get("{php echo $this->createWebUrl('set', array('op' => 'bank'));}" , function(data){
+            var obj = u.dialog('可用银行设置', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+    });
+    
+});
+</script>         
+{template 'common/footer'}

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest versionCode="0.6">
+	<application setting="true">
+		<name><![CDATA[打印管理]]></name>
+		<identifie><![CDATA[printer]]></identifie>
+		<version><![CDATA[0.1]]></version>
+		<type><![CDATA[biz]]></type>
+		<ability><![CDATA[打印管理]]></ability>
+		<description><![CDATA[打印管理]]></description>
+		<author><![CDATA[]]></author>
+		<url><![CDATA[]]></url>
+	</application>
+	<platform>
+		<subscribes>
+		</subscribes>
+		<handles>
+		</handles>
+		<rule embed="false" />
+	</platform>
+	<bindings>
+		<menu>
+			<entry title="打印任务列表" do="list" state="" direct="false" />
+			<entry title="打印机列表" do="printer" state="" direct="false" />
+		</menu>
+	</bindings>
+	<install><![CDATA[
+	
+DROP TABLE IF EXISTS `ims_printmodule`;
+CREATE TABLE `ims_printmodule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `computer` varchar(60) DEFAULT NULL,
+  `key` varchar(60) DEFAULT NULL,
+  `token` varchar(50) DEFAULT NULL,
+  `createtime` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;
+
+DROP TABLE IF EXISTS `ims_printer`;
+CREATE TABLE `ims_printer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `moduleid`  int(11) NOT NULL,
+  `index`  int(11) DEFAULT '0',
+  `title` varchar(30) DEFAULT NULL COMMENT '打印机名称',
+  `type` tinyint(4) DEFAULT '0' COMMENT '打印类型,1标签，2标准',
+  `createtime` int(11) DEFAULT '0',
+  `reporttime` int(11) DEFAULT '0' COMMENT '状态汇报时间',
+  `status` tinyint(4) DEFAULT NULL COMMENT '状态：0等待',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='打印机';
+            
+
+DROP TABLE IF EXISTS `ims_printtask`;
+CREATE TABLE `ims_printtask` (
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`title` varchar(50) DEFAULT NULL,
+	`moduleid` int(11) NOT NULL,
+	`printname` varchar(30) DEFAULT NULL,
+	`printid` int(11) NOT NULL,
+	`printtype` tinyint(4) DEFAULT 0,
+	`printdata` text DEFAULT NULL,
+	`templateid` char(36) DEFAULT '0',
+	`templatename` varchar(40) DEFAULT NULL,
+	`projguid` char(36) DEFAULT NULL,
+	`key` varchar(36) DEFAULT NULL,
+	`createtime` int(11) DEFAULT 0,
+	`updatetime` int(11) DEFAULT 0,
+	`createid` char(36) NOT NULL,
+	`creator` varchar(20) NOT NULL,
+	`status` varchar(10) DEFAULT '等待',
+	`complate` tinyint(4) DEFAULT 0,
+	PRIMARY KEY (`id`),
+	INDEX `projguid` (`projguid`),
+	INDEX `moduleid` (`moduleid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='打印任务';
+
+DROP TABLE IF EXISTS `ims_bookmarktofield`;
+
+ALTER TABLE `ims_printtemplate` CHANGE COLUMN `tags` `tagsnum` smallint(11) DEFAULT NULL;
+
+DROP TABLE IF EXISTS `ims_printtemplate`;
+CREATE TABLE IF NOT EXISTS  `ims_printtemplate` (
+	`id` char(36) NOT NULL,
+	`title` varchar(50) NOT NULL,
+	`printtype` tinyint(4) NOT NULL DEFAULT 0,
+	`tagsnum` int(11) DEFAULT NULL,
+	`createtime` int(11) DEFAULT 0,
+	`status` tinyint(4) DEFAULT NULL,
+	`datamap` text DEFAULT NULL,
+	`tags` varchar(200) DEFAULT NULL,
+	`content` longtext DEFAULT NULL,
+	`project` varchar(36) DEFAULT '',
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='打印模板';
+
+	]]></install>
+	<uninstall><![CDATA[
+	DROP TABLE IF EXISTS `ims_printtask`;
+	DROP TABLE IF EXISTS `ims_printer`;
+	DROP TABLE IF EXISTS `ims_printtemplate`;	
+	]]></uninstall>
+	<upgrade><![CDATA[]]></upgrade>
+</manifest>

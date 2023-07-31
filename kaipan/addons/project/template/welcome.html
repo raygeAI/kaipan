@@ -1,0 +1,26 @@
+{template 'common/header-project'}
+<style>
+    .account-basicinformation span{font-weight:700;}
+    .account-stat-num > div{width:15%; float:left; font-size:16px; text-align:center;}
+    .account-stat-num > div span{display:block; font-size:30px; font-weight:bold;}
+</style>
+<div class="main">
+    {loop $builds $b}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            {$b['BldFullName']}
+        </div>
+        <div class="panel-body">
+            
+            <div class="account-stat-num row">
+                {loop $b['stat'] $k $v}
+                <div>{$k}<span>{$v}</span></div>
+                {/loop}
+
+            </div>
+        </div>
+    </div>
+    {/loop}
+</div>
+
+{template 'common/footer'}

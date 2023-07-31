@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8;">
+   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+   <title>sign in</title>
+   <link rel="stylesheet" type="text/css" href="bootstrap-3.2.0-dist/css/bootstrap.min.css">
+   <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+   <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+  
+   <script type="text/javascript">
+        $(function () {        
+            (function ($) {
+                $.getUrlParam = function (name) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    var r = window.location.search.substr(1).match(reg);
+                    if (r != null) return unescape(r[2]); return null;
+                }
+            })(jQuery);      
+            var color = $.getUrlParam('color');
+            if(color=="red")
+            $('#url').attr('href','choose31.html');
+            else if(color=="white")
+            $('#url').attr('href','choose3.html');
+         
+        });
+ </script>
+  
+</head>
+<body>
+
+<div style="font-size:24px">
+<a id="url" href="">这是扫描页面</a>
+<div>
+</body>
+</html>			

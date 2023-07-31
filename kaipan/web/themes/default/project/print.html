@@ -1,0 +1,54 @@
+{template 'common/header-gw'}
+<ol class="breadcrumb">
+    <li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
+    <li><a href="{url 'system/welcome'}">打印模块管理</a></li>
+</ol>
+<div class="main">
+    <div class="panel panel-info">
+        <div class="panel-heading">打印模块列表</div>
+    </div>
+    <table class="table table-hover">
+        <thead class="navbar-inner">
+        <tr>
+            <th style="min-width:220px;">打印服务名</th>
+            <th style="width:160px;">是否本地</th>
+            <th style="width:160px;">连接时间</th>
+            <th style="width:100px;">状态</th>
+            <th style="width:90px;">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {loop $list $item}
+        <tr>
+            <td>{$item['computer']}</td>
+            <td>{$item['local']}</td>
+            <td>{php echo date('Y-m-d H:i:s',$item['createtime']);}</td>
+            <td>{$item['status']}</td>
+            <td>
+                <a onclick="return confirm('此操作不可恢复，确认吗？'); return false;" href="{php echo url('project/print', array('op'=>'delete','id' => $item['id']))}" title="删除" class="btn btn-default btn-sm"><i class="fa fa-times"></i></a>
+            </td>
+        </tr>
+        {/loop}
+        </tbody>
+    </table>
+    <div class="panel-footer" style="padding-bottom: 1px;">
+        {$pager}
+    </div>
+</div>
+<div id="footer-group" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-set').submit();">保存</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<script> 
+require(['bootstrap', 'util'],function($, u){
+    $('.delete').click(function(){
+        var rel = $(this).attr('rel');
+        $.get(rel  , function(data){
+            var obj = u.dialog('打印模块删除', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+
+    });
+});
+</script>
+{template 'common/footer-gw'}

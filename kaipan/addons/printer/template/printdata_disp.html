@@ -1,0 +1,22 @@
+<form method="post" action="{$url}" id="form-set" class="form-horizontal" role="form" style="min-height: 120px">
+    <input type="hidden" name="token" value="{$_W['token']}" />
+    <table class="table table-hover">
+        <thead class="navbar-inner">
+        <tr>
+            <th style="width: 200px">书签名称</th>
+            <th style="width: 280px">对应数据</th>
+        </tr>
+        </thead>
+        <tbody id="re-items">
+        {loop $printdata $k $v}
+        <tr>
+            <td><input class="form-control" value="{$k}"  type="text" readonly="readonly"></td>
+            <td>
+                <input class="form-control" value="{$v}"  type="text" readonly="readonly">
+            </td>
+        </tr>
+        {/loop}
+        </tbody>
+    </table>
+</form>
+

@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>时代地产</title>
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
+
+    <link href="css/jquery-ui.css" rel="stylesheet" />
+    <link href="bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script src="js/knockout-2.3.0.js"></script>
+    <!--<script src="js/common.js"></script>-->
+    <script src="js/jquery-ui.js"></script>
+    <style type="text/css">
+        body {
+        background:url(images/xuanfang.jpg) repeat;
+        }
+        .window {
+            width: 600px;
+            background-color: #d0def0;
+            position: absolute;
+            padding: 2px;
+            margin: 5px;
+            display: none;
+        }
+
+        .content01 {
+            height: 550px;
+            background-color: #ffd800;
+            font-size: 14px;
+            overflow: auto;
+        }
+
+        .title {
+            padding: 2px;
+            color: #080808;
+            font-size: 24px;
+        }
+
+            .title img {
+                float: right;
+            }
+    </style>
+    <script type="text/javascript">
+        var url = localStorage.getItem("url");
+        var token = localStorage.getItem("token");
+        var projectguid = localStorage.getItem("projectguid");
+
+        var buildlist = localStorage.getItem("buildlist");//取回room对象          
+        var buildlist = JSON.parse(buildlist);//把字符串转换成JSON对象
+
+
+        $(function () {
+            var projectnum = localStorage.getItem("projectnum");
+            if (projectnum == 1) {
+                $("#project").hide();
+            }
+          
+            var projectname = localStorage.getItem("projectname");
+            $("#currentProj").html("当前项目：" + projectname);
+        })
+
+        var zhongqiandata;
+        //二维码
+        function takecode() {
+            JSBridge.takecode(function (codeInfo, isSuccess) {
+                if (isSuccess == true) {
+                    var obj = eval('(' + codeInfo + ')');
+                    zhongqiandata = { info: { token: token }, func: 'lucky', params: { qrcode: obj.code, projguid: projectguid } };
+                    ko.applyBindings(new ViewModel());
+                }
+                else {
+                    alert("二维码扫描不成功");
+                }
+            });
+        }
+
+        //function takecode() {
+
+        //    zhongqiandata = { info: { token: token }, func: 'lucky', params: { qrcode: '30BE6199-1901-88AF-46E2-5668F2E62A1E', projguid: projectguid } };
+        //    ko.applyBindings(new ViewModel());
+
+        //}
+
+
+        function ViewModel() {
+            var self = this;
+            self.sign = ko.observableArray();
+
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: zhongqiandata,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+                        alert(json.msg);
+                    }
+                    else {
+                        alert(json.msg);
+                    }
+                    //if (json.result) {
+                    //    self.sign.push(json.data);
+                    //    var status = json.msg;
+                    //    $("#status").html(status);
+                    //}
+                    //else {
+                    //    $("#divmessage").append("<span style=\"font-size: 36px\">无效认筹单 </span> <br>");
+                    //}
+                    //popCenterWindow();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.msg);
+
+                },
+                timeout: 30000,
+            })
+        }
+
+
+        //查询单子状态
+        function search(key) {
+            var chipsdata = { info: { token: token }, func: 'chipsinfo', params: { qrcode: key } };
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: chipsdata,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+                        alert(json.data.step);
+                    }
+                    else {
+                        alert("无效认筹单！");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("无法获取数据，请重试");
+                    //alert(XMLHttpRequest.msg);
+                },
+                timeout: 5000,
+            })
+        }
+
+    </script>
+</head>
+<body >
+
+
+    <nav id="menu" class="navbar navbar-default  navbar-fixed-top" role="navigation" style="height: 71px; font-size: 14px; padding-top: 10px">
+        <div class="navbar-header" style="height: 70px">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" >时代地产</a>
+        </div>
+        <div class="collapse navbar-collapse" id="example-navbar-collapse" style="height: 70px; font-size: 24px;float:right">
+            <ul class="nav navbar-nav">
+              
+
+                <li id="project"><a href="premain.html">项目</a></li>
+                <li><a href="start.html">退出</a></li>
+                <li style="font-size: 12px"><a id="currentProj"></a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+    <section class="content">
+        <div class="container" style="margin-top: 150px;">
+            <div class="row" style="text-align: center">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <a onclick="takecode()">
+                        <img src="images/05.png" style="border-radius: 25px"
+                            alt="通用的占位符缩略图">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <div class="window" id="center">
+        <div id="title" class="title">
+            <!--<img src="images/close.jpg" alt="关闭" />-->
+            客户签到信息
+        </div>
+
+        <div class="content01">
+            <div id="divmessage" style="text-align: center; font-size: 24px; margin: 0 auto;" title="签到信息">
+                <div id="status" style="font-size: 36px; padding-top: 10px; padding-bottom: 10px"></div>
+                <div data-bind="foreach: sign" style="margin: 0 auto; padding-top: 30px">
+                    <table style="margin: auto">
+                        <tr>
+                            <td>组&#12288; &#12288;号:</td>
+                            <td style="font-size: 36px"><span data-bind="text: gid"></span></td>
+                        </tr>
+                        <tr>
+                            <td>客户名称:</td>
+                            <td><span data-bind="text: cname"></span></td>
+                        </tr>
+                        <tr>
+                            <td>证件号码:</td>
+                            <td><span data-bind="text: cardid"></span></td>
+                        </tr>
+                        <tr>
+                            <td>手&#12288; &#12288;机:</td>
+                            <td><span data-bind="text: mobile"></span></td>
+                        </tr>
+                        <!-- <tr><td>状&#12288; &#12288;态：</td><td><span data-bind="text: (signed == 1) ? '签到成功' : '签到失败'"></span></td></tr>-->
+                        <tr>
+                            <td>签到时间:</td>
+                            <td><span data-bind="text: signtime"></span></td>
+                        </tr>
+                    </table>
+
+                    <!--                    <button class="btn btn-primary btn-large" type="button" style="width: 150px; margin-top: 250px" onclick="javascript:window.location.href='main.html'">返回</button>-->
+                </div>
+                <button id="close" class="btn btn-primary btn-large" type="button" style="width: 150px; margin-top: 200px" onclick="javascript:window.location.href='main.html'">返回</button>
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+        //获取窗口的高度 
+        var windowHeight;
+        //获取窗口的宽度 
+        var windowWidth;
+        //获取弹窗的宽度 
+        var popWidth;
+        //获取弹窗高度 
+        var popHeight;
+        function init() {
+            windowHeight = $(window).height();
+            windowWidth = $(window).width();
+            popHeight = $(".window").height();
+            popWidth = $(".window").width();
+        }
+        //关闭窗口的方法 
+        function closeWindow() {
+            $("#close").click(function () {
+                $(this).parent().parent().parent().hide("slow");
+            })
+            //$(".title img").click(function () {
+            //    $(this).parent().parent().hide("slow");
+            //});
+        }
+        //定义弹出居中窗口的方法 
+        function popCenterWindow() {
+            init();
+            //计算弹出窗口的左上角Y的偏移量 
+            var popY = (windowHeight - popHeight) / 2;
+            var popX = (windowWidth - popWidth) / 2;
+            //alert('jihua.cnblogs.com'); 
+            //设定窗口的位置 
+            $("#center").css("top", popY).css("left", popX).slideToggle("slow");
+            closeWindow();
+        }
+        function popLeftWindow() {
+            init();
+            //计算弹出窗口的左上角Y的偏移量 
+            var popY = windowHeight - popHeight;
+            //var popX=-(windowWidth-popWidth); 
+            //alert(popY); 
+            //设定窗口的位置 
+            $("#left").css("top", popY - 50).css("left", 50).slideToggle("slow");
+            closeWindow();
+        }
+        function popRightWindow() {
+            init();
+            //计算弹出窗口的左上角Y的偏移量 
+            var popY = windowHeight - popHeight;
+            var popX = windowWidth - popWidth;
+            //alert(www.cnblogs.com/jihua); 
+            //设定窗口的位置 
+            $("#right").css("top", popY - 50).css("left", popX - 50).slideToggle("slow");
+            closeWindow();
+        } </script>
+
+</body>
+</html>

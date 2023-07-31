@@ -1,0 +1,156 @@
+{template 'common/header-gw'}
+	<ol class="breadcrumb">
+		<li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
+		<li class="active">楼盘项目列表</li>
+	</ol>
+	<div class="clearfix" style="margin-bottom:5em;">
+		<form action="{url 'project/display'}">
+
+			<div class="form-group">
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="请输入楼盘项目名称" name="keyword" value="{$_GPC['keyword']}">
+					<div class="input-group-btn">
+                        
+						<button class="btn btn-default"><i class="icon-search"></i> 搜索</button>
+					</div>
+				</div>
+			</div>
+		</form>
+        {if $import_enable}
+		<div class="input-group">
+			<a class="btn btn-primary" id="btn_import"><i class="fa fa-plus"></i> 导入楼盘项目</a>
+		</div>
+        {/if}
+		<ul class="list-unstyled account">
+			{loop $list $item}
+			<li>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<div class="row" style="font-size:16px; color:#666;">
+							<div class="col-md-6 col-lg-4">楼盘项目名称：<span>{$item['projname']}</span></div>
+							<div class=" pull-right">
+                                {if $_W['isfounder']}
+                                {if $item['status']==9}
+                                <a class="btn del" href="#"  data-id="{$item['projguid']}"><i class="fa fa-recycle"></i>删除项目</a>
+                                &nbsp;
+                                {/if}
+                                <a class="btn" href="{php echo url('project/user', array('pid' => $item['id']))}"  ><i class="fa fa-users"></i>用户权限</a>
+                                {/if}
+                                <a class="btn" href="{php echo url('project/switch', array('pid' => $item['id']))}"  ><i class="fa fa-cog"></i>管理</a>
+                                &nbsp;
+                            </div>
+						</div>
+					</div>
+                    <ul class="panel-body list-group ">
+
+                        <li class=" row list-group-item" style="line-height:60px;">
+                            <div class=" col-sm-12 col-md-1 col-lg-1">
+                                <i class="fa fa-2x fa-building-o"></i>
+                            </div>
+                            <div class="col-sm-12 col-md-2 col-lg-2 item">
+                                状态 : <span class="text-success"><i class="fa fa-check-circle"></i>{$status[$item['status']]}</span>
+                            </div>
+                            <div class="col-sm-12 col-md-5 col-lg-5 item">     
+                                创建：<span class="label label-info">{php echo date('Y-m-d H:i:s', $item['createtime'])}</span>
+                                &nbsp;更新：<span class="label label-warning">{php echo date('Y-m-d H:i:s', $item['changetime'])}</span>
+                            </div>
+                            <div class="ccol-sm-12 col-md-2 col-lg-2 text-right" style="padding-bottom:5px;">
+                                {if $_W['isfounder']&&($item['status']==9)}  
+                                <a class="btn update" href="#"  data-id="{$item['projguid']}"  ><i class="fa fa-upload"></i>更新ERP</a>
+                                {/if}
+                            </div>
+                        </li>
+                    </ul>
+				</div>
+			</li>
+			{/loop}
+		</ul>
+	{$pager}
+	</div>
+<!-- Modal -->
+<div class="modal fade" id="dlg_import" tabindex="-1" role="dialog" aria-labelledby="importLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="importLabel">导入项目</h4>
+            </div>
+            <div class="modal-body" style="min-height: 160px" >
+                <form method="post" action="{php echo url('project/post',array('op'=>'import'));}" id="form-set" role="form" >
+                <br/>
+                <div class="form-group" >
+                    <label>楼盘GUID</label>
+                    <input type="text" name="guid" id="projguid"  class="form-control" autocomplete="off">
+                </div>
+                <div class="form-group" >
+                    <label for="clear" class="checkbox-inline">
+                        <input type="checkbox" name="clear" value="true" id="clear" checked="checked">清除项目原来数据
+                    </label>
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" >导入项目数据</button>
+                <button type="button" class="btn btn-default" data-loading-text="关闭" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dlg_delete" tabindex="-1" role="dialog" aria-labelledby="importLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="importLabel">删除项目</h4>
+            </div>
+            <div class="modal-body" style="min-height: 120px" >
+                <form method="post" action="{php echo url('project/post',array('op'=>'delete'));}" id="form-del" role="form" >
+                    <br/>
+                    <h3>确认要删除当前项目吗？</h3>
+                    <input name="guid" id="guid" class="form-control" type="hidden">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary"  onclick="$('#form-del').submit();" >删除</button>
+                <button type="button" class="btn btn-default" data-loading-text="关闭" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer hide" id="footer-update">
+    <button type="button" class="btn btn-primary"  onclick="$('#form-update').submit();" >更新</button>
+    <button type="button" class="btn btn-default" data-loading-text="关闭" data-dismiss="modal">取消</button>
+</div>
+        
+<script>
+require(['bootstrap','util'],function($,u){
+
+    $('#btn_import').on('click', function(){
+        var dialog=$('#dlg_import');
+        dialog.modal('show');
+        dialog.find('.btn.btn-primary').click(function(){
+            $('#form-set').submit();
+        });
+    });
+
+    $('.del').on('click', function(){
+        var id= $(this).attr('data-id');
+        var dialog=$('#dlg_delete');
+        dialog.modal('show');
+        $('#guid').val(id);
+
+    });
+
+    $('.update').on('click', function(){
+        var id= $(this).attr('data-id');
+        $.get("{php echo url('project/post',array('op'=>'update'));}"+'&guid='+id , function(data){
+            var obj = u.dialog('项目更新设置', data, $('#footer-update').html());
+            obj.modal('show');
+        });
+
+    });
+    
+});
+
+</script>
+{template 'common/footer-gw'}

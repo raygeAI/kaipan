@@ -1,0 +1,183 @@
+{if $moudles}
+{if $enable_modules}
+<div class="page-header">
+	<h4><i class="fa fa-cubes"></i> 已启用的模块</h4>
+</div>
+<div class="panel panel-default row table-responsive">
+	<table class="table">
+		<tr>
+			<th style="width:80px"></th>
+			<th style="width:130px">模块名称</th>
+			<th style="width:150px">标识</th>
+			<th>描述</th>
+		</tr>
+		{loop $enable_modules $key $row}
+		<tr>
+			<td>
+				{if file_exists($buildinpath.$key.'/icon.jpg')}
+				<img alt="{$row['title']}" src="../framework/builtin/{$key}/icon.jpg" class="img-rounded">
+				{elseif file_exists($path.$key.'/icon.jpg')}
+				<img alt="{$row['title']}" src="../addons/{$key}/icon.jpg" width="48" height="48" class="img-rounded">
+				{else}
+				<img alt="{$row['title']}" src="./resource/images/nopic-small.jpg" width="48" height="48" class="img-rounded">
+				{/if}
+			</td>
+			<td>
+				{$row['title']}
+			</td>
+			<td>
+				{$row['name']}
+			</td>
+			<td>
+				{$row['ability']}
+			</td>
+			<td>
+				
+			</td>
+		</tr>
+		{/loop}
+	</table>
+</div>
+{/if}
+{if $unenable_modules}
+<div class="page-header">
+	<h4><i class="fa fa-cubes"></i> 未启用的模块</h4>
+</div>
+<div class="panel panel-default row table-responsive">
+	<table class="table">
+		<tr>
+			<th style="width:80px"></th>
+			<th style="width:130px">
+				模块名称
+			</th>
+			<th style="width:150px">
+				标识
+			</th>
+			<th>
+				描述
+			</th>
+			<th>
+				
+			</th>
+		</tr>
+		{loop $unenable_modules $key $row}
+		<tr>
+			<td>
+				{if file_exists($path.$key.'/icon.jpg')}
+				<img alt="{$row['title']}" src="../addons/{$key}/icon.jpg" width="48" height="48" class="img-rounded">
+				{else}
+				<img alt="{$row['title']}" src="./resource/images/nopic-small.jpg" width="48" height="48" class="img-rounded">
+				{/if}
+			</td>
+			<td>
+				{$row['title']}
+			</td>
+			<td>
+				{$row['name']}
+			</td>
+			<td>
+				{$row['ability']}
+			</td>
+			<td>
+				&nbsp;
+			</td>
+		</tr>
+		{/loop}
+	</table>
+</div>
+{/if}
+{else}
+	{if $entries['cover']}
+		<div class="page-header">
+			<h4><i class="fa fa-plane"></i> 功能封面设置 (微站访问入口)</h4>
+		</div>
+		<div class="shortcut clearfix">
+			{loop $entries['cover'] $cover}
+			<a href="{$cover['url']}" title="{$cover['title']}">
+				<i class="fa fa-external-link"></i>
+				<span>{$cover['title']}</span>
+			</a>
+			{/loop}
+		</div>
+	{/if}
+	{if $module['isrulefields']}
+	<div class="page-header">
+		<h4><i class="fa fa-plane"></i> 自动回复相应功能</h4>
+	</div>
+	<div class="shortcut clearfix">
+		<a href="{php echo url('platform/reply', array('m' => $m))}">
+			<i class="fa fa-comments"></i>
+			<span>回复规则列表</span>
+		</a>
+		<a href="{php echo url('platform/reply/post', array('m' => $m))}">
+			<i class="fa fa-comment"></i>
+			<span>添加回复规则</span>
+		</a>
+	</div>
+	{/if}
+	{if $entries['home'] || $entries['profile'] || $entries['shortcut']}
+		<div class="page-header">
+			<h4><i class="fa fa-plane"></i> 微站导航及菜单</h4>
+		</div>
+		<div class="shortcut clearfix">
+			{if $entries['home']}
+			<a href="{php echo url('site/nav/home', array('m' => $m))}">
+				<i class="fa fa-home"></i>
+				<span>微站首页导航</span>
+			</a>
+			{/if}
+			{if $entries['profile']}
+			<a href="{php echo url('site/nav/profile', array('m' => $m))}">
+				<i class="fa fa-user"></i>
+				<span>个人中心导航</span>
+			</a>
+			{/if}
+			{if $entries['shortcut']}
+			<a href="{php echo url('site/nav/shortcut', array('m' => $m))}">
+				<i class="fa fa-plane"></i>
+				<span>快速导航菜单</span>
+			</a>
+			{/if}
+		</div>
+	{/if}
+	{if empty($module['issolution'])}
+	{if $entries['menu']}
+	<div class="page-header">
+		<h4><i class="fa fa-plane"></i> 其他业务功能菜单</h4>
+	</div>
+	<div class="shortcut clearfix">
+		{loop $entries['menu'] $menu}
+		<a href="{$menu['url']}" title="{$menu['title']}">
+			<i class="fa fa-external-link"></i>
+			<span>{$menu['title']}</span>
+		</a>
+		{/loop}
+	</div>
+	{/if}
+	{else}
+	<div class="page-header">
+		<h4><i class="fa fa-plane"></i> 功能分权 (仅限行业模块)</h4>
+	</div>
+	<div class="shortcut clearfix">
+		<a href="{url 'profile/worker' array('m' => $m, 'reference' => 'solution')}">
+			<i class="fa fa-users"></i>
+			<span>设置操作用户</span>
+		</a>
+		<a href="{url 'home/welcome/solution' array('m' => $m)}">
+			<i class="fa fa-cogs"></i>
+			<span>进入管理后台</span>
+		</a>
+	</div>
+	{/if}
+	{if $module['settings']}
+	<div class="page-header">
+		<h4><i class="fa fa-plane"></i> 参数及选项</h4>
+	</div>
+	<div class="shortcut clearfix">
+		<a href="{url 'profile/module/setting' array('m' => $m)}">
+			<i class="fa fa-cog"></i>
+			<span title="参数设置">参数设置</span>
+		</a>
+	</div>
+	{/if}
+{/if}

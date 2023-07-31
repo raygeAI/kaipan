@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <title>Times Property</title>
+    <link href="bootstrap-3.2.0-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="bootstrap-3.2.0-dist/js/jquery-2.0.3.min.js"></script>
+    <script src="bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+    <script src="js/knockout-2.3.0.js"></script>
+
+    <script src="js/common.js"></script>
+    <style type="text/css">
+        body {
+            background:url(images/chips.jpg) repeat;
+        }
+        .center {
+            width: auto;
+            display: table;
+            margin-left: auto;
+            margin-right: auto;
+            border: 0px;
+            font-size: 26px;
+            line-height: 200%;
+        }
+
+        .customer {
+            width: auto;
+            display: table;
+            margin: 30px 50px;
+            text-align: left;
+            border: 0px;
+            font-size: 26px;
+            line-height: 200%;
+        }
+
+        table {
+     
+            margin:auto
+            
+        }
+
+        table, tr {
+            /*border: 1px solid green;*/
+            /*text-align: left;*/
+        }
+        th {
+           
+            width:50%
+        }
+
+        td {
+           
+            width: 50%;
+        }
+    </style>
+    <script type="text/javascript">
+        var projectguid = localStorage.getItem("projectguid");
+        var projectname = localStorage.getItem("projectname");
+
+        var key = getQueryString('key');
+        var token = localStorage.getItem("token");
+        var url = localStorage.getItem("url");
+        //var chipsdata = { info: { token: token }, func: 'chipsinfo', params: { qrcode: '8F473963-BBE3-68E6-3501-781E23ADA05E' } };
+        var chipsdata = { info: { token: token }, func: 'chipsinfo', params: { qrcode: key } };
+
+        $(function () {
+            $("#currentProj").html("当前项目：" + projectname);
+            var strHtml = "";
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                data: chipsdata,
+                //jsonp: 'callbackparam',
+                jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (json) {
+                    if (json.result) {
+                    
+                        var info = json.data;
+                        strHtml += "<div style=\"margin:auto;text-align:center\"><table><tr><th>姓名：</th><td>" + info["cname"] + "</td></tr>";
+                        strHtml += "<tr><th>性别:</th><td>" + info["grender"] + "</td></tr>";
+                        strHtml += "<tr><th>手机：</th><td>" + info["mobile"] + "</td></tr>";
+
+                        strHtml += "<tr><th>状态:</th><td>" + info["step"] + "</td></tr>";
+                        strHtml += "<tr><th>房间号：</th><td>" + info["roomcode"] + "</td></tr></table><br/>";
+                        strHtml += " <button class=\"btn btn-primary btn-large\" type=\"button\" style=\"width: 250px;height:50px;font-size:28px; margin-top: auto\" onclick=\"javascript:history.back(-1)\">返回</button>";
+
+
+                        //alert("姓名："+json.data.cname+",状态："+json.data.step+",房间号："+json.data.roomcode);
+                        //window.location.href = "javascript:history.back(-1)";
+
+                        $("#divmessage").html(strHtml);
+                    } else {
+                        alert(json.msg)
+                    }
+                },
+
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("获取数据失败，请重试");
+                },
+                timeout: 5000,
+            })
+        })
+
+    </script>
+
+</head>
+<body>
+
+    <nav id="menu" class="navbar navbar-default  navbar-fixed-top" role="navigation" style="height: 71px; font-size: 14px; padding-top: 10px;">
+        <div class="navbar-header" style="height: 70px">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="main.html">时代地产</a>
+        </div>
+        <div class="collapse navbar-collapse" id="example-navbar-collapse" style="height: 70px; font-size: 24px">
+            <ul class="nav navbar-nav">
+                <li><a href="main.html">首页</a></li>
+                <li class="active"><a href="room.html">选房</a></li>               
+                <li><a href="report.html">报表</a></li>
+                <li><a href="roomnei.html">内控表</a></li>
+
+                <li style="font-size: 16px"><a id="currentProj"></a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container" id="center" style="margin-top: 200px;">
+        <div id="divmessage" style="text-align: center; font-size: 36px;margin:0 auto">
+        </div>
+    </div>
+
+
+</body>
+</html>

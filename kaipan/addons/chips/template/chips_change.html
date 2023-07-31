@@ -1,0 +1,123 @@
+{template 'common/header-project'}
+<style>
+    .form-horizontal .has-feedback .form-control-feedback {
+        top: 0;
+        right: -15px;
+    }
+    .form-horizontal .has-feedback .input-group .form-control-feedback {
+        top: 0;
+        right: -30px;
+    }
+</style>
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{$url}">{$title}</a></li>
+    </ul>
+    <form action="" method="post"  class="form-horizontal" role="form" enctype="multipart/form-data" id="formadd">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <ul class="nav nav-pills nav-width nav-justified">
+                    <li {if $step == 1}class="active"{else}class="normal"{/if}><a>信息读入</a></li>
+                    <li {if $step == 2}class="active"{else}class="normal"{/if}><a>用户信息</a></li>
+                </ul>
+            </div>
+            <div class="panel-body" style="min-height: 240px;" >
+                <input type="hidden" name="token" value="{$_W['token']}" />
+                {if $step == 1 }
+                <OBJECT classid="clsid:10946843-7507-44FE-ACE8-2B3483D179B7" id="CVR_IDCard" name="CVR_IDCard" width="0" height="0">
+
+                </OBJECT>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">证件号码</label>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="cardid" id="cardid"
+                                   value="" placeholder="输入身份证号码，有读卡器可点击读取自动获取"/>
+                            <div class="input-group-btn">
+                                <span class="btn btn-primary search" id="btn_read"><i class="fa fa-inbox"></i>读取</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">客户名称</label>
+                    <div class="col-sm-3">
+                        <input type="text" name="user[CstName]" value="" class="form-control"  readonly="readonly" />
+                    </div>
+                    <label class="col-sm-1 control-label">性别</label>
+                    <div class="col-sm-2">
+                        <input type="text" name="user[Gender]" class="form-control"  readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">通讯地址</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="user[Address]"  class="form-control" readonly="readonly"/>
+                    </div>
+                </div>
+                {else if $step == 2 }
+                {template 'common/user_input'}
+                {/if}
+            </div>
+
+            <div class="panel-footer">
+                <input type="hidden" name="step" value="{$step}" />
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        {if $step<2}<button type="submit" class="btn btn-success" name="submit" value="next">下一步</button>
+                        {else}<button type="submit" class="btn btn-success" name="submit" value="submit">提交</button>{/if}
+                    </div>
+                    <div class="btn-group">
+                        <a  class="btn btn-warning" href="{php echo $this->createWebUrl('chips');}">取消</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    var step={$step};
+    require(['jquery', 'util'], function($,u) {
+        $('#btn_read').on('click', function () {
+            var CVR_IDCard = document.getElementById("CVR_IDCard");
+            if (CVR_IDCard.readyState != 4) {
+                u.message('无法加载设备！');
+                return;
+            }
+            var strReadResult = CVR_IDCard.ReadCard();
+            if (strReadResult == "0") {
+                $("input[name='user[CstName]']").val(CVR_IDCard.Name);
+                $("input[name='user[Gender]']").val(CVR_IDCard.Sex);
+                $("input[name='user[Address]']").val(CVR_IDCard.Address);
+                $("#cardid").val(CVR_IDCard.CardNo);
+            } else {
+                u.message('设备读取出错！<br/>' + strReadResult);
+            }
+        });
+        $('#formadd').submit(function () {
+
+            if (step == 1) {
+                if (!$("#cardid").val()) {
+                    u.message('证件号码为必填项，请返回修改！', '', 'error');
+                    return false;
+                }
+            }
+            if (step == 2) {
+                if (!$("#CstName").val()) {
+                    u.message('客户名称为必填项，请返回修改！', '', 'error');
+                    return false;
+                }
+                if (!$("#location").val()) {
+                    u.message('通讯地址为必填项，请返回修改！', '', 'error');
+                    return false;
+                }
+                if (!$("#mobile").val()) {
+                    u.message('手机号码必填项，请返回修改！', '', 'error');
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+
+{template 'common/footer'}

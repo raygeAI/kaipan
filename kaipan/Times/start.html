@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
+
+    <title>Times Property</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="robots" content="" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/style.css" media="all" />
+    <!--[if IE]><link rel="stylesheet" href="css/ie.css" media="all" /><![endif]-->
+    <script src="js/jquery-1.8.0.min.js"></script>
+
+    <script type="text/javascript">
+        var token;
+        var url;
+        $(function () {
+            if (window.localStorage) {
+                //localStorage.removeItem();
+                //localStorage.setItem("url", "http://182.254.197.221/api.php");
+                //localStorage.setItem("url", "http://10.1.10.161/api.php");
+                localStorage.setItem("url", "http://10.4.39.6/api.php");
+
+                //url = localStorage.getItem("url");
+                // alert('This browser supports localStorage');
+            } else {
+                alert('This browser does NOT support localStorage');
+            }
+        })
+        function loginCheckAjaxFunction() {
+            //ajax   登陆验证             
+            var account = $("#account").val();
+            var pwd = $("#pwd").val();
+            //url = $("#url").val();
+
+            //url = "http://" + url + "/api.php";
+            var storage = window.localStorage;
+            //var num = storage.getItem("token");
+            url = localStorage.getItem("url");
+
+            var logindata = { info: { token: token }, func: 'login', params: { usercode: account, password: pwd } };
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: logindata,
+                //data: {//设置数据源
+                //    loginAccout: $("input[name=loginAccout]").val(),
+                //    loginPwd: $("input[name=loginPwd]").val()
+                //},                
+                dataType: 'jsonp',//设置需要返回的数据类型  
+                jsonpCallback: "callbacksuccess",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                success: function (jsons) {                    //alert(jsons.data.user.Token)                
+                    if (jsons.result) {
+                        localStorage.setItem("token", jsons.data.user.Token);
+                        location.href = "premain.html";
+                    }
+                    else {
+                        alert(jsons.msg);
+                    }
+                    //登陆成功后的处理
+                },
+                error: function () {
+                    alert("登陆失败，请重试");
+                    //ui.error('登陆失败，请重试', 2000);
+                },
+                timeout: 10000,
+            });
+        }
+
+
+    </script>
+</head>
+<body class="login">
+
+
+    <section>
+        <h1>时代地产购房系统</h1>
+        <div>
+            <!--<input id="url" type="text" placeholder="请输入远程服务器地址"  />-->
+            <input id="account" type="text" placeholder="请输入用户名" />
+            <input id="pwd" type="password" placeholder="请输入密码" />
+            <button class="blue" onclick="loginCheckAjaxFunction()">登录</button>
+        </div>
+    </section>
+
+</body>
+</html>

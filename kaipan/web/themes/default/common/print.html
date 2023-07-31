@@ -1,0 +1,51 @@
+<form method="post" action="{$url}" id="form-print" class="form-horizontal" role="form" style="min-height: 120px">
+    <input type="hidden" name="token" value="{$_W['token']}" />
+    {if !empty($showMsg)}
+    <div class="form-group">
+        <div class="col-sm-3">
+            <i class="fa fa-4x fa-info-circle fa-lg"></i>
+        </div>
+        <div class="col-sm-9">
+            <h4>提示：当前打印数据已打印过！</h4>
+        </div>
+    </div>
+    {/if}
+    <div class="form-group">
+        <label class="col-sm-3 control-label">客户信息</label>
+        <div class = "col-md-6">
+            <input class="form-control" value="{$chips['cname']}-{$chips['cardid']}" readonly="readonly">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">打印类型</label>
+        <div class = "col-md-6">
+            <input class="form-control" value="{$titles[$printType]}" readonly="readonly">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">打印模板</label>
+        <div class ="col-md-6">
+            <select name="template" class="form-control">
+                {loop $templates $t}
+                <option value="{$t['id']}" >{$t['title']}</option>
+                {/loop}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">打印机</label>
+        <div class ="col-md-6">
+            <select name="printer" class="form-control">
+                {loop $prints $k $item}
+                <option value="{$k}" {if $lastPrintId==$k}selected{/if}>{$item['title']}</option>
+                {/loop}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">打印份数</label>
+        <div class = "col-md-6">
+            <input class="form-control" name="copy" type="number" value="{$copy}" min="1" max="{$maxcopy}">
+        </div>
+    </div>
+</form>

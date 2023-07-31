@@ -1,0 +1,21 @@
+<form method="post" action="{$url}" id="form-set" class="form-horizontal" role="form" style="min-height: 120px">
+    <input type="hidden" name="token" value="{$_W['token']}" />
+    <br/>
+    <div class="form-group">
+        <label class="col-md-3 control-label">改变状态</label>
+        <div class = "col-md-8">
+            {loop $status $k $v}
+                <label >
+                    <input type="radio" name="status" autocomplete="off" value="{$k}"
+                    {if $k==$project['status']}checked{/if}>{$v}
+                </label>
+            {/loop}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">离线服务器</label>
+        <div class = "col-md-5">
+            <input type="text" name="client"  value="{$set['client']}" class="form-control" >
+        </div>
+    </div>
+</form>

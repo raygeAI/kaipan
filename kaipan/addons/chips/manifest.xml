@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="" versionCode="0.6">
+	<application setting="true">
+		<name><![CDATA[认筹]]></name>
+		<identifie><![CDATA[chips]]></identifie>
+		<version><![CDATA[0.1]]></version>
+		<type><![CDATA[biz]]></type>
+		<ability><![CDATA[认筹管理]]></ability>
+		<description><![CDATA[认筹管理]]></description>
+		<author><![CDATA[]]></author>
+	</application>
+	<platform>
+		<subscribes>
+		</subscribes>
+		<handles>
+		</handles>
+		<rule embed="false" />
+	</platform>
+	<bindings>
+		<menu>
+			<entry title="认筹列表" do="chips" state="" direct="false" />
+		</menu>
+	</bindings>
+	<install><![CDATA[
+--update ims_chips a INNER JOIN ims_p_customer b ON a.cid = b.CstGUID set a.grender=b.Gender
+        DROP TABLE IF EXISTS  `ims_p_Customer`;
+	    CREATE TABLE IF NOT EXISTS  `ims_p_Customer` (
+            `CstGUID`  varchar(36)  NOT NULL ,
+            `CstName`  varchar(60)  NULL DEFAULT NULL ,
+            `CardID`  varchar(100)  NULL DEFAULT NULL ,
+            `OfficeTel`  varchar(100)  NULL DEFAULT NULL ,
+            `HomeTel`  varchar(64)  NULL DEFAULT NULL ,
+            `MobileTel`  varchar(100)  NULL DEFAULT NULL ,
+            `Email`  varchar(30)  NULL DEFAULT NULL ,
+            `PostCode`  varchar(50)  NULL DEFAULT NULL ,
+            `Address`  varchar(200)  NULL DEFAULT NULL ,
+            `CstType`  varchar(10)  NULL DEFAULT NULL ,
+            `Gender`  varchar(10)  NULL DEFAULT NULL ,
+            `CardType`  varchar(100)  NULL DEFAULT NULL ,
+            `Fax`  varchar(30)  NULL DEFAULT NULL ,
+            `WorkAddr`  varchar(200)  NULL DEFAULT NULL ,
+            `Country`  varchar(30)  NULL DEFAULT NULL ,
+            `Province`  varchar(30)  NULL DEFAULT NULL ,
+            `City`  varchar(30)  NULL DEFAULT NULL ,
+            `Regional`  varchar(30)  NULL DEFAULT NULL ,
+            `Road`  varchar(30)  NULL DEFAULT NULL ,
+            `AddrNO`  varchar(30)  NULL DEFAULT NULL ,
+            `Description`  varchar(4000)  NULL DEFAULT NULL ,
+            `CreatedOn`  datetime NULL DEFAULT NULL ,
+            `CreatedBy`  varchar(20)  NULL DEFAULT NULL ,
+            `BizLicence`  varchar(30)  NULL DEFAULT NULL ,
+            `Corporation`  varchar(60)  NULL DEFAULT NULL ,
+            `ModifyOn`  datetime NULL DEFAULT NULL ,
+            `ModifyBy`  varchar(20)  NULL DEFAULT NULL ,
+            `BirthDate`  datetime NULL DEFAULT NULL ,
+            `CstCode`  varchar(50)  NULL DEFAULT NULL ,
+            `Nationality`  varchar(50)  NULL DEFAULT NULL ,
+            `Preferred`  varchar(30)  NULL DEFAULT NULL ,
+            `RefuseInfo`  varchar(200)  NULL DEFAULT NULL ,
+            `FirstContact`  varchar(60)  NULL DEFAULT NULL ,
+            `CompanyPhone`  varchar(100)  NULL DEFAULT NULL ,
+            `CreditEvaluate` varchar(100) NULL DEFAULT NULL ,
+            `CreatedByGUID`  varchar(36)  NULL DEFAULT NULL ,
+            `IsCreatorUse`  tinyint(4) NULL DEFAULT NULL ,
+            `CognizeAve`  varchar(50)  NULL DEFAULT NULL ,
+            `WeiTdlr`  varchar(50)  NULL DEFAULT NULL ,
+            `signguid`  varchar(36)  NULL DEFAULT NULL ,
+            `Catacode1`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode2`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode3`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode4`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode5`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode6`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode7`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode8`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode9`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode10`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode11`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode12`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode13`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode14`  varchar(50)  NULL DEFAULT NULL ,
+            `Catacode15`  varchar(50)  NULL DEFAULT NULL ,
+            `KhFl`  varchar(50)  NULL DEFAULT NULL ,
+            `JzState`  varchar(50)  NULL DEFAULT NULL ,
+            `BodyState`  varchar(100)  NULL DEFAULT NULL ,
+            `CharacterState`  varchar(100)  NULL DEFAULT NULL ,
+            `HKProvince`  varchar(50)  NULL DEFAULT NULL ,
+            `HKCity`  varchar(50)  NULL DEFAULT NULL ,
+            `HKCounty`  varchar(50)  NULL DEFAULT NULL ,
+          `erp` tinyint(4) unsigned DEFAULT '0' COMMENT 'erp数据',
+          `status` tinyint(4) unsigned DEFAULT '0' COMMENT '状态',
+          PRIMARY KEY (`CstGUID`)
+        ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='客户信息';
+            
+
+        DROP TABLE IF  EXISTS  `ims_chips`;
+        CREATE TABLE IF NOT EXISTS  `ims_chips` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `pid` int(11) NOT NULL COMMENT '项目id',
+          `cid` char(36) NOT NULL DEFAULT '' COMMENT 'CstGUID',
+          `qrcode` char(36) NOT NULL  COMMENT 'qrcode',
+          `qrimage` varchar(300) DEFAULT NULL COMMENT '二维码图像',  
+          `cname` varchar(20) DEFAULT '' COMMENT '用户',
+          `grender` varchar(10) DEFAULT '男' COMMENT '性别',
+          `mobile` varchar(20) DEFAULT '' COMMENT '手机',
+          `cardid` varchar(100) DEFAULT '' COMMENT '证件号码',
+          `product` varchar(30) DEFAULT '' COMMENT '意向产品',
+          `housetype` varchar(30) DEFAULT '' COMMENT '意向户型',
+          `local`  tinyint(4) DEFAULT 0  COMMENT '本地户口',
+          `housenum`  smallint(6) DEFAULT 0  COMMENT '已有房数',
+          `agency` varchar(30)  COMMENT '代理公司',
+          `agencychild` varchar(30)  COMMENT '辅助代理公司',
+          `salesman` varchar(20)  COMMENT '业务员',
+          `premoney` decimal(10,0) DEFAULT 0 COMMENT '诚意金',
+          `preattach` varchar(400) DEFAULT NULL,
+          `pretype` tinyint DEFAULT 0 COMMENT '诚意金类型',
+          `ordermoney` decimal(10,0) DEFAULT 0 COMMENT '订金',
+          `roomguid` char(36) NOT NULL  COMMENT '房间ID',
+          `roomcode` varchar(40) NOT NULL  COMMENT '房间',
+          `roomstatus` tinyint(4) unsigned DEFAULT '0' COMMENT '房间状态1选2购',
+          `buguid` char(36)   COMMENT '组织id ',
+          `createid` char(36) unsigned NOT NULL  COMMENT '创建人id',
+          `creator` varchar(20) NOT NULL  COMMENT '创建人名称',
+          `changetime` int(10) unsigned NOT NULL COMMENT '改变时间',
+          `createtime` int(10) unsigned NOT NULL COMMENT '创建时间',
+          `ordertime` int(10) unsigned NOT NULL COMMENT '交款时间',
+          `status` tinyint(4) unsigned DEFAULT '0' COMMENT '状态',
+          `deleted` tinyint(4) unsigned DEFAULT '0' COMMENT '删除',
+          `signed` tinyint(4) unsigned DEFAULT '0' COMMENT '已签到',
+          `operator` varchar(20) NOT NULL  COMMENT '删除人',
+          PRIMARY KEY (`id`),
+          KEY `pid` (`pid`),
+          KEY `qrcode` (`qrcode`)
+        ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='认筹';
+        ALTER TABLE `ims_chips` DROP COLUMN `holder`;
+        ALTER TABLE `ims_chips` ADD COLUMN `holdername` varchar(50) AFTER `ordermoney`;
+        ALTER TABLE `ims_chips` ADD COLUMN `holderguid` varchar(300)  AFTER `ordermoney`;
+        ALTER TABLE `ims_chips` ADD COLUMN `intendroom` text DEFAULT NULL COMMENT '意向房间';
+        ALTER TABLE `ims_chips` ADD COLUMN 	`printstatus` smallint(6) DEFAULT 0;
+        ALTER TABLE `ims_chips` ADD COLUMN `orderattach` VARCHAR(400);
+        ALTER TABLE `ims_chips` ADD COLUMN `SyncTime` int(10) unsigned DEFAULT '0' COMMENT '写入ERP';
+	 ALTER TABLE `ims_chips` ADD COLUMN `printdate` int(10) DEFAULT 0;
+	 ALTER TABLE `ims_chips` DROP COLUMN `pid`;
+	  ALTER TABLE `ims_chips` DROP COLUMN `buguid`;
+	  ALTER TABLE `ims_chips` ADD COLUMN `signdate` int(10) DEFAULT 0;
+	  ALTER TABLE `ims_chips` ADD COLUMN `lucky` tinyint(4) DEFAULT 0;
+	  ALTER TABLE `ims_chips` ADD COLUMN `remark` varchar(200) DEFAULT NULL COMMENT '备注';
+	  ALTER TABLE `ims_chips` ADD COLUMN `salesmanGUID` char(36) DEFAULT NULL COMMENT '业务员guid';
+            
+        
+        
+        CREATE TABLE IF NOT EXISTS `ims_s_fee` (
+	`FeeGUID` varchar(36) NOT NULL,
+	`ProjGUID` char(36) DEFAULT NULL,
+	`TradeGUID` varchar(36) DEFAULT NULL,
+	`Sequence` int(11) DEFAULT NULL,
+	`Flag` varchar(10) DEFAULT NULL,
+	`lastDate` datetime DEFAULT NULL,
+	`ItemType` varchar(20) DEFAULT NULL,
+	`ItemName` varchar(30) DEFAULT NULL,
+	`Amount` float DEFAULT NULL,
+	`Bz` varchar(10) DEFAULT NULL,
+	`ExRate` float DEFAULT NULL,
+	`RmbAmount` float DEFAULT NULL,
+	`RmbYe` float DEFAULT NULL,
+	`JmLateFee` float DEFAULT NULL,
+	`Remark` varchar(1000) DEFAULT NULL,
+	`Ye` float DEFAULT NULL,
+	`IsChg` tinyint(4) DEFAULT NULL,
+	`OutAmount` float DEFAULT NULL,
+	`OutRmbAmount` float DEFAULT NULL,
+	`PayEvent` varchar(30) DEFAULT NULL,
+	`PayLagQty` int(11) DEFAULT NULL,
+	`PayLagUnit` varchar(10) DEFAULT NULL,
+	`DsAmount` float DEFAULT NULL,
+	`RmbDsAmount` float DEFAULT NULL,
+	`signguid` varchar(36) DEFAULT NULL,
+	`IsBcXyKx` tinyint(4) DEFAULT NULL,
+	PRIMARY KEY (`FeeGUID`)
+   ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT '供款明细表' ;
+   ALTER TABLE `ims_s_fee` ADD COLUMN `SyncTime` int(10) unsigned DEFAULT '0' COMMENT '写入ERP';
+
+        DROP TABLE IF EXISTS `ims_bill`;
+        CREATE TABLE IF NOT EXISTS `ims_bill` (  
+            `BillGUID` char(36) NOT NULL,
+            `Qrcode` char(36) NOT NULL comment '认筹单二维码',
+            `ProjGUID` char(36) NOT NULL,
+            `InvoDetailGUID` char(36) NOT NULL comment '票据明细GUID',
+            `Jkr` varchar(120) DEFAULT NULL,
+            `BatchNo` varchar(30) DEFAULT NULL,
+            `InvoNo` varchar(20) DEFAULT NULL,
+            `Money` decimal(10,0) UNSIGNED DEFAULT NULL comment '票据总金额',
+            `BillType` tinyint(4) DEFAULT 0  comment '票据类型，1诚，2定',
+            `Kpr` varchar(20) DEFAULT NULL comment '开票人',
+            `KpDate` varchar(30) DEFAULT NULL comment '开票时间',
+            `Printed` tinyint(4) DEFAULT 0  comment '是否打否，1打印',
+            `Details` text DEFAULT NULL,
+            `createid` char(36) DEFAULT NULL comment '创建人id',
+            `createtime` int(10) unsigned NOT NULL COMMENT '创建时间',
+            `ErpSync` tinyint(4) DEFAULT 0  comment '同步标记，1位中心，2位erp',
+            `SyncTime` int DEFAULT 0  comment 'ERP同步时间,0没有同步',
+            PRIMARY KEY (`BillGUID`),
+            INDEX `Qrcode` USING BTREE (`Qrcode`) comment ''
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT '票据交款' ;
+	
+	]]></install>
+	<uninstall><![CDATA[
+
+	]]></uninstall>
+	<upgrade><![CDATA[]]></upgrade>
+</manifest>

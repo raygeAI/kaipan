@@ -1,0 +1,120 @@
+{template 'common/header-project'}
+<style>
+    .groupBox {width: 130px;height:60px; float:left; margin:5px 0 0 5px; background-color:#d9edf7; border-radius:10px;}
+    .groupNum {font-size: 32px; line-height:60px; margin-left:5px; float:left;}
+</style>
+<div class="main">
+    <form action="" method="post"  class="form-horizontal" role="form" id="form1">
+    <div class="panel panel-info">
+        <div class="panel-heading"><h4 class="panel-title">选房叫号</h4></div>
+        <div class="panel-body" >
+            <div class="row">
+                {loop $groups $g}
+                {if empty($g['called'])}<label for="c_{$g['dispnum']}">
+                <div class="brand-primary groupBox">
+                    <span class="groupNum">{$g['dispnum']} </span>
+                    <div class="zs" style=" margin:8px 0 0 5px; float:left; width:60px;list-style-type:none;text-decoration:none;">
+                        <li>总数 <span class="badge">{$g['maxnum']}</span></li>
+                        <li>签到 <span class="badge">{$g['signednum']}</span></li>
+                    </div>
+					<div style="margin-top:20px;text-align:center; margin-left:auto; margin-right:auto;">
+					<input id="c_{$g['dispnum']}" name='info' value="{$g['dispnum']}"  type="checkbox"></div>
+                </div></label>
+                {/if}
+                {/loop}
+            </div>
+        </div>
+        <div class="row brand-info" style="height:52px;background-color:#f2f2f3; padding:4px;">
+		<div style=" float:left; font-size:18px; margin:3px 0 0 0;">
+		    <div style="margin:7px 0 0 0; float:left; ">
+            上次叫号:<span class="label label-warning" style="font-size: 23px;">{php echo empty($last)?'无':$last;}</span></div>
+            </div>
+			<div style="margin:10px 0 0 25px; float:left; font-size:18px">
+            本次取号:<span id="lbl_callnum" class="label label-success"  style="font-size: 23px; "></span>
+                <input type="hidden" id="callnum" name="callnum" value=""/>
+                （最多叫{$maxselect}组）
+            </div>
+			<div  style="float:right;">
+                <label  ><input type="radio" name="calltype" id="flow">顺序取号</label>
+                <label  style="margin-left:5px; "><input type="radio" name="calltype" checked id="rand"> 随机取号</label>
+                <input type="hidden" name="token" value="{$_W['token']}" />
+            <button class="btn btn-lg btn-success" id='btn_call' name="submit" value="call" style="margin-left:10px;">叫号</button>
+            </div>
+        </div>
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th>组号</th>
+                <th>总人员</th>
+                <th>签到人员</th>
+                <th>预设人数</th>
+                <th>叫号时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $called $row}
+            <tr>
+                <td>{$row['dispnum']}</td>
+                <td>{$row['maxnum']}</td>
+                <td>{$row['signednum']}</td>
+                <td>{$row['presetnum']}</td>
+                <td>{php echo date('Y-m-d H:i:s',$row['calltime']);}</td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+    </div>
+    </form>
+</div>
+
+<script>
+    var maxselect={$maxselect};    
+    require(['jquery','util'], function($,u) {
+        
+        $('.groupBox input:checkbox').on('click', function(){
+            var checked=$(this).is(":checked");
+            var selectnum=$('.groupBox input:checked').size();
+            if(checked&&(selectnum>maxselect)) {
+                $(this).prop("checked", false);
+                return false;
+            }else{
+                setNum();
+            }
+            
+        });
+        $('#flow').on('click', function(){
+            selectnum(false);
+        });
+        $('#rand').on('click', function(){
+            selectnum(true);
+        });
+        $('#btn_call').on('click', function(){
+            var num=$('#callnum').val().trim();
+            
+            if(num==''){
+                var rand=$('#rand').is(":checked");
+                selectnum(rand);
+            }
+        });
+    });
+    function selectnum(rand){
+        var g=$('.groupBox input:checkbox');
+        g.prop("checked",false);
+        var s=0;
+        if(rand) {
+            s = Math.floor((Math.random() * g.size()));
+        }
+        g.eq(s).prop("checked", true);
+        setNum(); 
+    }
+    function setNum(){
+        var num= $('.groupBox input:checked').map(function () { return $(this).val(); }).get();
+        if(num.length==0) {
+            num=' ';
+        }
+        $('#lbl_callnum').text(num);
+        $('#callnum').val(num);
+    }
+</script> 
+
+{template 'common/footer'}

@@ -1,0 +1,135 @@
+{template 'common/header-project'}
+<div class="main">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{php echo $this->createWebUrl($do);}">认筹单列表</a></li>
+        <li><a href="{php echo $this->createWebUrl($do,array('op'=>'add'));}">添加认筹单</a></li>
+    </ul>
+    <div class="panel panel-info">
+        <div class="panel-heading">筛选</div>
+        <div class="panel-body"  >
+            <form action="{php echo $this->createWebUrl('chips');}" method="post" class="form-horizontal" role="form">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <select name="query" class="form-control">
+                            <option value="0" {if $_GPC['query']==0}selected{/if}>客户名称</option>
+                            <option value="1" {if $_GPC['query']==1}selected{/if}>证件号码</option>
+                            <option value="2" {if $_GPC['query']==2}selected{/if}>电话号码</option>
+                        </select>
+                    </div>
+                    <label class=" col-sm-1 control-label">关键字</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" name="keyword" id="" type="text" value="{$_GPC['keyword']}">
+                    </div>
+                    <label class=" col-sm-1 control-label">状态</label>
+                    <div class="col-sm-2">
+                        <select name="status" class="form-control">
+                            <option value="-1" {if $selstatus==-1}selected{/if} >所有</option>
+                            {loop $status $k $v}
+                            <option value="{$k}" {if $selstatus==$k}selected{/if}>{$v}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <div class=" col-md-1">
+                        <button class="btn btn-primary"><i class="fa fa-search"></i>搜索</button>
+                    </div >
+                    <div class="pull-right  col-md-2">
+                        <button  class="btn btn-primary" value="导出" name="submit"><i class="fa fa-inbox"></i>导出</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+            <tr>
+                <th style="min-width:140px;">身份信息</th>
+                <th style="width:100px;">意向信息</th>
+                <th style="width:100px;">具体意向</th>
+                <th style="width:100px;">代理信息</th>
+                <th style="width:96px;">附属权益人</th>
+                <th style="width:21px;"></th>
+                <th style="width:180px;">认购书信息</th>
+                <th style="width:62px;">状态</th>
+                <th style="width:176px;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $item}
+            <tr>
+                <td>{$item['cname']}&nbsp;{$item['mobile']}<br/>{$item['cardid']}</td>
+                <td>{$item['product']}<br/>{$item['housetype']}</td>
+                <td>{php echo str_replace(',','<br>',$item['intendroom']);}</td>
+                <td>{$item['agency']}<br/>{$item['salesman']}</td>
+                <td>{php echo str_replace(';','<br>',$item['holdername']);}</td>
+                <td>
+                    <a href="{php echo $this->createWebUrl('customer', array('op'=>'add','id' => $item['id']))}" title="增加权益人"><i class="fa fa-plus"></i></a>
+                    {if !empty($item['holdername'])}
+                    <br/>
+                    <a href="#" data-id="{$item['id']}" title="删除权益人" class="delete"><i class="fa fa-trash-o"></i></a>
+                    {/if}
+                </td>
+                <td>{if empty($item['ChipsNo'])}未生成{else}编号：{$item['ChipsNo']}<br>{php echo date('Y-m-d H:i:s',$item['printdate']);}{/if}
+
+                <td>{$status[$item['pretype']]}
+                    {if $item['deleted']}<br/><span class="label label-danger">作废</span>{/if}
+                </td>
+
+                <td>
+                    <a href="#" data-id="{$item['id']}"  title="查看" class="btn btn-default btn-sm disp"><i class="fa fa-eye"></i></a>&nbsp;
+                    {if empty($item['pretype'])}
+                    <a href="{php echo $this->createWebUrl($do, array('op' => 'edit','id' => $item['id']))}" title="编辑" class="btn btn-default btn-sm"><i class="fa fa-edit"></i></a>&nbsp;
+                    {/if}
+                    <a href="{php echo $this->createWebUrl('customer', array('op'=>'change','id' => $item['id']))}" title="换名" class="btn btn-default btn-sm"><i class="fa fa-user fa-pencil"></i></a>&nbsp;
+                    <a data-id="{$item['id']}" title="打印" class="btn btn-default btn-sm print"><i class="fa fa-print"></i></a>
+                </td>
+            </tr>
+            {/loop}
+            </tbody>
+        </table>
+        <div class="panel-footer" style="padding-bottom: 1px;">
+            {$pager}
+        </div>
+
+    </div>
+</div>
+<div id="footer-group" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-print').submit();">打印</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<div id="footer-delete" class="hide">
+    <span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-delete').submit();">删除</span>
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<div id="footer-disp" class="hide">
+    <!--<span name="submit" id="submit" class="btn btn-primary" onclick="$('#form-delete').submit();">删除</span>-->
+    <button type="button" class="btn btn-default"  data-dismiss="modal">关闭</button>
+</div>
+<script> 
+require(['bootstrap', 'util'],function($, u){
+    $('.print').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo  $this->createWebUrl($do,array('op'=>'print'));}"+'&id='+id  , function(data){
+            var obj = u.dialog('打印设置', data, $('#footer-group').html());
+            obj.modal('show');
+        });
+    });
+
+    $('.delete').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo  $this->createWebUrl('DelHolder');}"+'&id='+id  , function(data){
+            var obj = u.dialog('权益人设置', data, $('#footer-delete').html());
+            obj.modal('show');
+        });
+    });
+
+    $('.disp').click(function(){
+        id= $(this).attr('data-id');
+        $.get("{php echo  $this->createWebUrl($do,array('op'=>'display'));}"+'&id='+id  , function(data){
+            var obj = u.dialog('认筹单信息', data, $('#footer-disp').html(),{'showModal':'modal-lg'});
+            obj.modal('show');
+        });
+    });
+});
+</script> 
+
+{template 'common/footer-project'}

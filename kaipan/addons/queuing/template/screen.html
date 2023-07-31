@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>中签叫号</title>
+    <script type="text/javascript" src="./resource/js/jquery.min.js"></script>
+    <script type="text/javascript" src="./resource/js/easing.js"></script>
+    <style>
+        html,body{margin:0;padding:0;overflow:hidden;}
+        body{background:url(./resource/images/screen/body_bg.jpg) 0px 0px repeat-x #000;}
+        .main_bg{background:url(./resource/images/screen/main_bg.jpg) top center no-repeat;height:1000px;}
+        .main{width:1000px;height:1000px;position:relative;margin:0 auto;}
+        .num_mask{background: url(./resource/images/screen/num_mask.png) 0px 0px no-repeat;
+height: 86px;
+width: 327px;
+position: absolute;
+left: 90%;
+top: 270px;
+margin-left: -92px;
+z-index: 9;}
+        .num_box{height: 160px;
+width: 325px;
+position: absolute;
+left: 90%;
+top: 270px;
+margin-left: -80px;
+z-index: 8;
+overflow: hidden;
+text-align: center;}
+        .num{background: url(./resource/images/screen/num.png) top center repeat-y;
+width: 95px;
+height: 156px;
+float: left;
+margin-right: 10px;
+}}
+        .btn{background:url(./resource/images/screen/btn_start.png) 0px 0px no-repeat;width:264px;height:89px;position:absolute;left:50%;bottom:50px;margin-left:-132px;cursor:pointer;clear:both;}
+        .full {
+            background: url("./resource/images/screen/full.png") no-repeat 0px 0px;
+            width: 26px;
+            height: 26px;
+            border: 0px;
+            margin-top: 0px;
+            float:right;
+            cursor: pointer;}
+        .mub{text-align: center;
+width: 780px;
+height: 510px;
+position: absolute;
+top: 50px;
+vertical-align: middle;
+margin-left: -40px;
+overflow: hidden;
+border-radius: 5%;
+background: rgba(230, 106, 106, 0.3);
+padding: 0px 10px 0 15px;}
+        .mub li{background: url(./resource/images/screen/nub.png) 0px 0px no-repeat;
+width: 73px;
+height: 40px;
+float: left;
+margin: 10px 5px 0 0;
+list-style-type: none;
+font-family: 黑体;
+font-size: 2.5em;
+line-height: 42px;
+color: #5C0505;
+font-weight: 900;}
+    </style>
+</head>
+<body>
+<div class="main_bg">
+    <div class="main">
+        <div id="res" style="text-align:center;color:#fff;padding-top:0px;"></div>
+        <input type="button" class="full" onclick="fullscreen2()"/>
+        <div class="mub">
+            {loop $groupnum $n}
+            <li>{$n}</li>
+            {/loop}
+        </div>
+
+        <div class="num_mask"></div>
+        <div class="num_box">
+            <div class="num"></div>
+            <div class="num"></div>
+            <div class="num"></div>
+            <div class="num" style=" display:none;"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    var num='{$callnum}';
+    var called={$json};
+    var u = 160;
+    var isBegin = false;
+    function showNum(){
+        if(isBegin) return false;
+        isBegin = true;
+        $(".num").css('backgroundPositionY',0);
+        var result = num;
+        <!--$('#res').text('摇奖结果 = '+result);-->
+        var num_arr = (result+'').split('');
+        $(".num").each(function(index){
+            var _num = $(this);
+            setTimeout(function(){
+                _num.animate({
+                    backgroundPositionY: (u*60) - (u*num_arr[index])
+                },{
+                    duration: 3000,
+                    easing: "easeInOutCirc",
+                    complete: function(){
+                        if(index==3) {
+                            isBegin = false;
+                            addNum();
+                        }
+                    }
+                });
+            }, index * 200);
+        });
+    }
+    function getCallNum(){
+        $.post('./../api.php',{func:'calllnum'},function(result){
+            if(result.result && (result.data!=num)){
+                num=result.data;
+                showNum();
+            }
+        });
+    }
+    function addNum(){
+        var add=num>0;
+        for(var i=0,k=called.length;i<k;i++){
+            if(num==called[i]){
+                add=false;
+            }
+        }
+        if(add) {
+            called.push(num);
+            $('.mub').append('<li>' + parseInt(num) + '</li>');
+        }
+        if( called.length>100){
+            $('.mub').find("li:first-child").remove();
+        }
+    }
+    $(function(){
+        showNum();
+    });
+    setInterval(function(){getCallNum();},1000*4);
+    
+    function fullscreen2()
+    { var docElm = document.documentElement;
+//W3C 
+        if (docElm.requestFullscreen) {
+            docElm.requestFullscreen();
+        }
+//FireFox 
+        else if (docElm.mozRequestFullScreen) {
+            docElm.mozRequestFullScreen();
+        }
+//Chrome等 
+        else if (docElm.webkitRequestFullScreen) {
+            docElm.webkitRequestFullScreen();
+        }
+//IE11 
+        else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+
+    }    
+    
+</script>

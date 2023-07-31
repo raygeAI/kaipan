@@ -1,0 +1,22 @@
+<form method="post" action="{$url}" id="form-set" class="form-horizontal" role="form" style="min-height: 120px">
+    <input type="hidden" name="token" value="{$_W['token']}" />
+    <textarea  name="json" rows="16"  id="json" class="form-control" >
+        
+    </textarea>
+</form>
+<script>
+    var objJson={$json};
+    require(['jquery'], function($) {
+        $("#json").text(JSON.stringify(objJson, null, '\t'));
+        $("#form-set").submit(function(){
+            inputJson=$("#json").html();
+            try{
+                JSON.parse(inputJson);
+            }
+            catch(e){
+                alert('输入格式错误');
+                return false;
+            }
+        });
+    });
+</script>
